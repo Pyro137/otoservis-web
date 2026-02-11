@@ -1,9 +1,14 @@
 {% extends "base.html" %}
-{% block title %}{{ wo.work_order_number }} — OtoServis Pro{% endblock %}
+{% block title %}{{ wo.work_order_number }} — Classic Car{% endblock %}
 {% block page_title %}İş Emri: {{ wo.work_order_number }}{% endblock %}
 {% block page_subtitle %}{{ wo.vehicle.plate_number }} — {{ wo.customer.full_name }}{% endblock %}
 {% block page_actions %}
 <a href="/work-orders/{{ wo.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
+<form method="POST" action="/work-orders/{{ wo.id }}/delete" style="display:inline">
+    <button type="submit" class="btn-danger btn-sm"
+        onclick="return confirm('Bu iş emrini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">🗑️
+        Sil</button>
+</form>
 {% endblock %}
 
 {% block content %}
@@ -106,6 +111,93 @@
 </div>
 {% endif %}
 
+<!-- Photo Attachments -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-lg font-bold text-gray-800">📸 Fotoğraflar</h3>
+        <span class="text-xs font-semibold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">{{ photos|length }}
+            fotoğraf</span>
+    </div>
+
+    <!-- Photo Gallery -->
+    {% if photos %}
+    <div class="p-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {% for photo in photos %}
+            <div
+                class="photo-card group relative rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                <img src="/static/uploads/work_orders/{{ wo.id }}/{{ photo.filename }}"
+                    alt="{{ photo.caption or photo.original_filename }}"
+                    class="w-full h-36 object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                    onclick="openLightbox(this.src, '{{ photo.caption or photo.original_filename }}')">
+                <!-- Overlay info -->
+                <div
+                    class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <span class="photo-category-badge
+                        {% if photo.category.value == 'before' %}cat-before
+                        {% elif photo.category.value == 'after' %}cat-after
+                        {% elif photo.category.value == 'damage' %}cat-damage
+                        {% else %}cat-other{% endif %}">
+                        {% if photo.category.value == 'before' %}Öncesi
+                        {% elif photo.category.value == 'after' %}Sonrası
+                        {% elif photo.category.value == 'damage' %}Hasar
+                        {% else %}Diğer{% endif %}
+                    </span>
+                    {% if photo.caption %}
+                    <p class="text-white text-xs mt-1 truncate">{{ photo.caption }}</p>
+                    {% endif %}
+                </div>
+                <!-- Delete button -->
+                <form method="POST" action="/work-orders/{{ wo.id }}/photos/{{ photo.id }}/delete"
+                    class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button type="submit"
+                        class="w-7 h-7 bg-red-500/90 hover:bg-red-600 text-white rounded-lg flex items-center justify-center text-xs shadow-lg backdrop-blur-sm"
+                        onclick="return confirm('Fotoğrafı silmek istediğinizden emin misiniz?')">✕</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="p-8 text-center">
+        <svg class="w-12 h-12 mx-auto text-gray-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <p class="text-sm text-gray-400">Henüz fotoğraf eklenmedi.</p>
+    </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <div class="border-t border-gray-100 px-6 py-4 bg-gray-50/50">
+        <h4 class="text-sm font-semibold text-gray-600 mb-3">Fotoğraf Yükle</h4>
+        <form method="POST" action="/work-orders/{{ wo.id }}/photos/upload" enctype="multipart/form-data"
+            class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Dosya</label>
+                <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required
+                    class="input-field text-sm file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100 file:cursor-pointer">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Kategori</label>
+                <select name="category" class="input-field text-sm">
+                    <option value="before">Öncesi</option>
+                    <option value="after">Sonrası</option>
+                    <option value="damage">Hasar</option>
+                    <option value="other" selected>Diğer</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Açıklama</label>
+                <input type="text" name="caption" placeholder="İsteğe bağlı..." class="input-field text-sm">
+            </div>
+            <div>
+                <button type="submit" class="btn-primary btn-sm w-full whitespace-nowrap">📤 Yükle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Items Table -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -119,6 +211,7 @@
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Miktar</th>
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Birim Fiyat</th>
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İskonto</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">KDV</th>
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Toplam</th>
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
             </tr>
@@ -133,6 +226,8 @@
                 <td class="px-6 py-3 text-right text-sm">{{ item.quantity }}</td>
                 <td class="px-6 py-3 text-right text-sm">₺{{ "{:,.2f}".format(item.unit_price) }}</td>
                 <td class="px-6 py-3 text-right text-sm">₺{{ "{:,.2f}".format(item.discount) }}</td>
+                <td class="px-6 py-3 text-right text-sm"><span class="badge bg-violet-50 text-violet-700">%{{
+                        item.vat_rate|int }}</span></td>
                 <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(item.total_price) }}</td>
                 <td class="px-6 py-3 text-right">
                     <form method="POST" action="/work-orders/{{ wo.id }}/remove-item/{{ item.id }}"
@@ -142,7 +237,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="7" class="px-6 py-6 text-center text-gray-400">Henüz kalem eklenmedi.</td>
+                <td colspan="8" class="px-6 py-6 text-center text-gray-400">Henüz kalem eklenmedi.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -152,7 +247,7 @@
     <div class="border-t border-gray-100 px-6 py-4 bg-gray-50">
         <h4 class="text-sm font-semibold text-gray-600 mb-3">Yeni Kalem Ekle</h4>
         <form method="POST" action="/work-orders/{{ wo.id }}/add-item"
-            class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+            class="grid grid-cols-1 md:grid-cols-7 gap-3 items-end">
             <div>
                 <label class="block text-xs text-gray-500 mb-1">Tür</label>
                 <select name="type" id="item_type" class="input-field text-sm" onchange="togglePartSelect()">
@@ -183,10 +278,15 @@
                 <input type="number" name="unit_price" id="item_price" value="0" min="0" step="0.01"
                     class="input-field text-sm">
             </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">İskonto</label>
+                <input type="number" name="discount" value="0" min="0" step="0.01" class="input-field text-sm">
+            </div>
             <div class="flex gap-2 items-end">
                 <div class="flex-1">
-                    <label class="block text-xs text-gray-500 mb-1">İskonto</label>
-                    <input type="number" name="discount" value="0" min="0" step="0.01" class="input-field text-sm">
+                    <label class="block text-xs text-gray-500 mb-1">KDV %</label>
+                    <input type="number" name="vat_rate" value="20" min="0" max="100" step="0.01"
+                        class="input-field text-sm" placeholder="20">
                 </div>
                 <button type="submit" class="btn-primary btn-sm whitespace-nowrap">+ Ekle</button>
             </div>
@@ -284,13 +384,17 @@
         </div>
         <div class="p-6">
             <div class="space-y-3 text-sm mb-4">
-                <div class="flex justify-between"><span class="text-gray-500">İş Emri:</span> <span class="font-bold">{{ wo.work_order_number }}</span></div>
-                <div class="flex justify-between"><span class="text-gray-500">Tahmini Tutar:</span> <span class="font-bold text-lg">₺{{ "{:,.2f}".format(wo.grand_total) }}</span></div>
-                <div class="flex justify-between"><span class="text-gray-500">Kalem Sayısı:</span> <span class="font-semibold">{{ wo.items|length }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">İş Emri:</span> <span class="font-bold">{{
+                        wo.work_order_number }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Tahmini Tutar:</span> <span
+                        class="font-bold text-lg">₺{{ "{:,.2f}".format(wo.grand_total) }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Kalem Sayısı:</span> <span
+                        class="font-semibold">{{ wo.items|length }}</span></div>
             </div>
             <p class="text-gray-400 text-xs mb-4">Müşteriye göndermek için iş teklifi PDF'ini indirin.</p>
             <a href="/payments/work-order/{{ wo.id }}/proposal/pdf" target="_blank"
-                class="btn-sm w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200">📋 İş Teklifi PDF İndir</a>
+                class="btn-sm w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200">📋
+                İş Teklifi PDF İndir</a>
         </div>
     </div>
 </div>
@@ -309,6 +413,21 @@
             document.getElementById('item_desc').value = opt.dataset.name || '';
             document.getElementById('item_price').value = opt.dataset.price || '0';
         }
+    }
+
+    // Lightbox for photo viewing
+    function openLightbox(src, caption) {
+        const overlay = document.createElement('div');
+        overlay.className = 'photo-lightbox';
+        overlay.innerHTML = `
+            <div class="lightbox-backdrop" onclick="this.parentElement.remove()"></div>
+            <div class="lightbox-content">
+                <button class="lightbox-close" onclick="this.closest('.photo-lightbox').remove()">✕</button>
+                <img src="${src}" alt="${caption}">
+                ${caption ? `<p class="lightbox-caption">${caption}</p>` : ''}
+            </div>
+        `;
+        document.body.appendChild(overlay);
     }
 </script>
 {% endblock %}

@@ -26,15 +26,24 @@
     <style>
         /* ── Sidebar ── */
         .sidebar-link {
-            @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgb(148, 163, 184);
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .sidebar-link:hover {
-            @apply text-white;
+            color: #fff;
         }
 
         .sidebar-link.active {
-            @apply text-white;
+            color: #fff;
         }
 
         .sidebar-link svg {
@@ -132,7 +141,7 @@
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-base font-bold leading-tight truncate tracking-tight">OtoServis</h1>
+                    <h1 class="text-base font-bold leading-tight truncate tracking-tight">Classic Car</h1>
                     <p class="text-[11px] text-slate-500 leading-tight">Yönetim Paneli</p>
                 </div>
             </div>

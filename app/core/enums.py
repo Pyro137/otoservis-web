@@ -54,3 +54,10 @@ class AuditAction(str, enum.Enum):
     CREATE = "create"
     UPDATE = "update"
     DELETE = "delete"
+
+
+class PhotoCategory(str, enum.Enum):
+    BEFORE = "before"
+    AFTER = "after"
+    DAMAGE = "damage"
+    OTHER = "other"

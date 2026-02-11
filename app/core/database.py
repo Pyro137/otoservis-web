@@ -39,5 +39,5 @@ def get_db():
 
 def init_db():
     """Create all tables. Used at startup."""
-    from app.models import user, customer, vehicle, work_order, work_order_item, part, payment, invoice, audit_log  # noqa: F401
+    from app.models import user, customer, vehicle, work_order, work_order_item, part, payment, invoice, audit_log, work_order_photo  # noqa: F401
     Base.metadata.create_all(bind=engine)

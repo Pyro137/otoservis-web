@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, Form, Query
+from fastapi import APIRouter, Request, Depends, Form, Query, UploadFile, File
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,7 @@ from app.services.part_service import PartService
 from app.services.auth_service import AuthService
 from app.services.payment_service import PaymentService
 from app.services.invoice_service import InvoiceService
+from app.services.photo_service import PhotoService
 
 router = APIRouter(prefix="/work-orders", tags=["work_orders"])
 
@@ -134,6 +135,7 @@ async def work_order_detail(
     pay_service = PaymentService(db)
     inv_service = InvoiceService(db)
     part_service = PartService(db)
+    photo_service = PhotoService(db)
 
     from app.services.work_order_service import VALID_TRANSITIONS
     allowed_transitions = VALID_TRANSITIONS.get(wo.status, [])
@@ -141,6 +143,7 @@ async def work_order_detail(
     total_paid = pay_service.get_total_for_work_order(wo_id)
     invoice = inv_service.get_by_work_order(wo_id)
     parts = part_service.get_all(limit=500)
+    photos = photo_service.get_by_work_order(wo_id)
 
     return request.app.state.templates.TemplateResponse(
         "work_orders/detail.html",
@@ -154,6 +157,7 @@ async def work_order_detail(
             "remaining": float(wo.grand_total) - total_paid,
             "invoice": invoice,
             "parts": parts,
+            "photos": photos,
             "item_types": WorkOrderItemType,
             "statuses": WorkOrderStatus,
         },
@@ -250,6 +254,7 @@ async def add_item(
     unit_price: str = Form("0"),
     discount: str = Form("0"),
     part_id: str = Form(""),
+    vat_rate: str = Form("20"),
 ):
     service = WorkOrderService(db)
     # Safe parsing — prevent empty string → int errors
@@ -265,6 +270,10 @@ async def add_item(
         disc = float(discount) if discount else 0
     except ValueError:
         disc = 0
+    try:
+        vat = float(vat_rate) if vat_rate else 20
+    except ValueError:
+        vat = 20
 
     parsed_part_id = None
     if part_id and part_id.strip():
@@ -279,6 +288,7 @@ async def add_item(
         "quantity": qty,
         "unit_price": price,
         "discount": disc,
+        "vat_rate": vat,
         "part_id": parsed_part_id,
     }
     service.add_item(wo_id, item_data, user_id=user.id)
@@ -308,3 +318,43 @@ async def delete_work_order(
     service = WorkOrderService(db)
     service.delete(wo_id, user_id=user.id)
     return RedirectResponse("/work-orders", status_code=303)
+
+
+# ── Photo Attachments ──
+
+@router.post("/{wo_id}/photos/upload")
+async def upload_photo(
+    wo_id: int,
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+    photo: UploadFile = File(...),
+    category: str = Form("other"),
+    caption: str = Form(""),
+):
+    photo_service = PhotoService(db)
+    try:
+        await photo_service.upload_photo(
+            work_order_id=wo_id,
+            file=photo,
+            category=category,
+            caption=caption,
+            user_id=user.id,
+        )
+    except ValueError:
+        pass  # Validation error — silently redirect back
+    return RedirectResponse(f"/work-orders/{wo_id}", status_code=303)
+
+
+@router.post("/{wo_id}/photos/{photo_id}/delete")
+async def delete_photo(
+    wo_id: int,
+    photo_id: int,
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    photo_service = PhotoService(db)
+    photo_service.delete_photo(photo_id)
+    return RedirectResponse(f"/work-orders/{wo_id}", status_code=303)
+

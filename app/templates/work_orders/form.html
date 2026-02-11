@@ -1,85 +1,133 @@
 {% extends "base.html" %}
-{% block title %}{% if work_order %}İş Emri Düzenle{% else %}Yeni İş Emri{% endif %} — OtoServis Pro{% endblock %}
+{% block title %}{% if work_order %}İş Emri Düzenle{% else %}Yeni İş Emri{% endif %} — Classic Car{% endblock %}
 {% block page_title %}{% if work_order %}İş Emri Düzenle — {{ work_order.work_order_number }}{% else %}Yeni İş Emri{%
 endif %}{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl animate-in">
-    <div class="form-card-premium p-8">
+<div class="max-w-5xl mx-auto animate-in">
+    <div class="form-card-premium p-10">
         <form method="POST"
             action="{% if work_order %}/work-orders/{{ work_order.id }}/edit{% else %}/work-orders/create{% endif %}"
-            class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Müşteri *</label>
-                    <select name="customer_id" id="customer_select" required class="input-field"
-                        onchange="filterVehicles()">
-                        <option value="">Seçiniz...</option>
-                        {% for c in customers %}
-                        <option value="{{ c.id }}" {% if selected_customer_id==c.id %}selected{% endif %}>{{ c.full_name
-                            }} ({{ c.phone }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Araç *</label>
-                    <select name="vehicle_id" id="vehicle_select" required class="input-field">
-                        <option value="">Seçiniz...</option>
-                        {% for v in vehicles %}
-                        <option value="{{ v.id }}" data-customer="{{ v.customer_id }}" {% if selected_vehicle_id==v.id
-                            %}selected{% endif %}>{{ v.plate_number }} — {{ v.brand }} {{ v.model }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Teknisyen</label>
-                    <select name="technician_id" class="input-field">
-                        <option value="">Seçiniz...</option>
-                        {% for t in technicians %}
-                        <option value="{{ t.id }}" {% if work_order and work_order.technician_id==t.id %}selected{%
-                            endif %}>{{ t.full_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Giriş KM</label>
-                    <input type="number" name="km_in"
-                        value="{{ work_order.km_in if work_order and work_order.km_in else '' }}" class="input-field">
-                </div>
-                {% if work_order %}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Çıkış KM</label>
-                    <input type="number" name="km_out"
-                        value="{{ work_order.km_out if work_order and work_order.km_out else '' }}" class="input-field">
-                </div>
-                {% endif %}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Yakıt Seviyesi</label>
-                    <select name="fuel_level" class="input-field">
-                        <option value="">Seçiniz...</option>
-                        {% for level in ['Dolu', '3/4', '1/2', '1/4', 'Boş'] %}
-                        <option value="{{ level }}" {% if work_order and work_order.fuel_level==level %}selected{% endif
-                            %}>{{ level }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+            class="space-y-10">
+
+            <!-- Section 1: Customer & Vehicle -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Müşteri Şikayeti</label>
-                <textarea name="complaint_description" rows="3"
-                    class="input-field">{{ work_order.complaint_description if work_order else '' }}</textarea>
+                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+                    Müşteri & Araç Bilgileri
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Müşteri <span
+                                class="text-red-400">*</span></label>
+                        <select name="customer_id" id="customer_select" required class="input-field"
+                            onchange="filterVehicles()">
+                            <option value="">Müşteri seçiniz...</option>
+                            {% for c in customers %}
+                            <option value="{{ c.id }}" {% if selected_customer_id==c.id %}selected{% endif %}>
+                                {{ c.full_name }} ({{ c.phone }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Araç <span
+                                class="text-red-400">*</span></label>
+                        <select name="vehicle_id" id="vehicle_select" required class="input-field">
+                            <option value="">Araç seçiniz...</option>
+                            {% for v in vehicles %}
+                            <option value="{{ v.id }}" data-customer="{{ v.customer_id }}" {% if
+                                selected_vehicle_id==v.id %}selected{% endif %}>
+                                {{ v.plate_number }} — {{ v.brand }} {{ v.model }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            <!-- Section 2: Assignment & Details -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Dahili Notlar</label>
-                <textarea name="internal_notes" rows="2"
-                    class="input-field">{{ work_order.internal_notes if work_order else '' }}</textarea>
+                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+                    Atama & Araç Detayları
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Teknisyen</label>
+                        <select name="technician_id" class="input-field">
+                            <option value="">Atanmadı</option>
+                            {% for t in technicians %}
+                            <option value="{{ t.id }}" {% if work_order and work_order.technician_id==t.id %}selected{%
+                                endif %}>
+                                {{ t.full_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Giriş KM</label>
+                        <input type="number" name="km_in"
+                            value="{{ work_order.km_in if work_order and work_order.km_in else '' }}"
+                            placeholder="Örn: 85000" class="input-field">
+                    </div>
+                    {% if work_order %}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Çıkış KM</label>
+                        <input type="number" name="km_out"
+                            value="{{ work_order.km_out if work_order and work_order.km_out else '' }}"
+                            placeholder="Örn: 85050" class="input-field">
+                    </div>
+                    {% endif %}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Yakıt Seviyesi</label>
+                        <select name="fuel_level" class="input-field">
+                            <option value="">Belirtilmedi</option>
+                            {% for level in ['Dolu', '3/4', '1/2', '1/4', 'Boş'] %}
+                            <option value="{{ level }}" {% if work_order and work_order.fuel_level==level %}selected{%
+                                endif %}>
+                                {% if level == 'Dolu' %}⛽ Dolu
+                                {% elif level == '3/4' %}⛽ 3/4
+                                {% elif level == '1/2' %}⛽ 1/2
+                                {% elif level == '1/4' %}⛽ 1/4
+                                {% else %}⛽ Boş{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+
+            <!-- Section 3: Notes -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-xs font-bold">3</span>
+                    Şikayet & Notlar
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Müşteri Şikayeti</label>
+                        <textarea name="complaint_description" rows="4" class="input-field w-full"
+                            placeholder="Müşterinin bildirdiği arıza veya şikayeti yazınız...">{{ work_order.complaint_description if work_order else '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Dahili Notlar</label>
+                        <textarea name="internal_notes" rows="3" class="input-field w-full"
+                            placeholder="Teknisyen veya servis notları...">{{ work_order.internal_notes if work_order else '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center gap-3 pt-6 border-t border-gray-100">
                 <button type="submit" class="btn-gradient-primary flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    Kaydet
+                    {% if work_order %}Güncelle{% else %}İş Emri Oluştur{% endif %}
                 </button>
                 <a href="/work-orders" class="btn-secondary">İptal</a>
             </div>

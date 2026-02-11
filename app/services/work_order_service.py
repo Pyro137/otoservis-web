@@ -147,15 +147,19 @@ class WorkOrderService:
         discount = Decimal(str(item_data.get("discount", 0)))
         total = (qty * unit_price) - discount
         item_data["total_price"] = max(total, Decimal("0"))
+        # Ensure vat_rate has a default
+        if "vat_rate" not in item_data:
+            item_data["vat_rate"] = settings.DEFAULT_VAT_RATE
         return item_data
 
     def _recalculate_totals(self, work_order: WorkOrder):
-        """Recalculate work order financial totals from items."""
+        """Recalculate work order financial totals from items (per-item VAT)."""
         items = self.item_repo.get_by_work_order(work_order.id)
 
         labor_total = Decimal("0")
         parts_total = Decimal("0")
         discount_total = Decimal("0")
+        vat_total = Decimal("0")
 
         for item in items:
             if item.type == WorkOrderItemType.LABOR:
@@ -163,10 +167,11 @@ class WorkOrderService:
             else:
                 parts_total += item.total_price
             discount_total += item.discount
+            # Per-item VAT calculation
+            item_vat_rate = Decimal(str(item.vat_rate)) if item.vat_rate is not None else Decimal("20")
+            vat_total += item.total_price * item_vat_rate / Decimal("100")
 
         subtotal = labor_total + parts_total
-        vat_rate = Decimal(str(work_order.vat_rate))
-        vat_total = subtotal * vat_rate / Decimal("100")
         grand_total = subtotal + vat_total
 
         self.repo.update(work_order, {
