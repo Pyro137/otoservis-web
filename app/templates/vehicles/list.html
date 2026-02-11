@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Araçlar — OtoServis Pro{% endblock %}
+{% block page_title %}Araçlar{% endblock %}
+{% block page_subtitle %}Toplam {{ total }} araç{% endblock %}
+{% block page_actions %}<a href="/vehicles/create" class="btn-primary">+ Yeni Araç</a>{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <form method="GET" class="flex gap-3">
+        <input type="text" name="q" value="{{ q }}" placeholder="Plaka, marka veya model ile ara..."
+            class="input-field max-w-md">
+        <button type="submit" class="btn-primary">Ara</button>
+        {% if q %}<a href="/vehicles" class="btn-secondary">Temizle</a>{% endif %}
+    </form>
+</div>
+
+<div class="table-container">
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Plaka</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Marka / Model</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Yıl</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">KM</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for v in vehicles %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4"><a href="/vehicles/{{ v.id }}"
+                        class="text-primary-600 font-bold hover:underline">{{ v.plate_number }}</a></td>
+                <td class="px-6 py-4 text-sm">{{ v.brand }} {{ v.model }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ v.year or '—' }}</td>
+                <td class="px-6 py-4 text-sm"><a href="/customers/{{ v.customer.id }}"
+                        class="text-primary-600 hover:underline">{{ v.customer.full_name }}</a></td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ v.current_km or '—' }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="/vehicles/{{ v.id }}/edit" class="text-gray-400 hover:text-primary-600"><svg
+                            class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg></a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-400">Araç bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<div class="flex items-center justify-center gap-2 mt-6">
+    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">←
+        Önceki</a>{% endif %}
+    <span class="text-sm text-gray-500">Sayfa {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">
+        Sonraki →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

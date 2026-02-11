@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OtoServis Pro{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                        accent: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        sidebar: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ── Sidebar ── */
+        .sidebar-link {
+            @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-300;
+        }
+
+        .sidebar-link:hover {
+            @apply bg-white/10 text-white;
+        }
+
+        .sidebar-link.active {
+            @apply bg-primary-600/80 text-white shadow-lg;
+        }
+
+        .sidebar-link svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md;
+        }
+
+        .btn-secondary {
+            @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+        }
+
+        .btn-danger {
+            @apply bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+        }
+
+        .btn-success {
+            @apply bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+        }
+
+        .btn-warning {
+            @apply bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+        }
+
+        .btn-sm {
+            @apply text-xs py-1.5 px-3 rounded-lg;
+        }
+
+        /* ── Input Fields — strong visible strokes ── */
+        .input-field {
+            @apply w-full px-4 py-2.5 rounded-xl text-sm text-gray-900 outline-none transition-all duration-200 bg-white placeholder-gray-400;
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-field:hover {
+            border-color: #94a3b8;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        select.input-field {
+            @apply appearance-none cursor-pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2.5rem;
+        }
+
+        textarea.input-field {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        label {
+            @apply block text-sm font-semibold text-gray-700 mb-1.5;
+        }
+
+        /* ── Cards & Tables ── */
+        .stat-card {
+            @apply bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow;
+        }
+
+        .table-container {
+            @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden;
+        }
+
+        .badge {
+            @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+        }
+
+        /* ── Scrollbar ── */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body class="h-full bg-gray-50 font-sans">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="w-60 bg-sidebar-900 text-white flex flex-col fixed h-full z-30">
+            <!-- Logo — icon and text side by side -->
+            <div class="px-5 py-4 border-b border-white/10 flex items-center gap-3">
+                <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-base font-bold leading-tight truncate">OtoServis</h1>
+                    <p class="text-[11px] text-slate-400 leading-tight">Yönetim Paneli</p>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto sidebar-nav">
+                <p class="px-3 pt-1 pb-2 text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Ana Menü
+                </p>
+                <a href="/" class="sidebar-link {% if request.url.path == '/' %}active{% endif %}">
+                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                    </svg>
+                    Panel
+                </a>
+                <a href="/customers" class="sidebar-link {% if '/customers' in request.url.path %}active{% endif %}">
+                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Müşteriler
+                </a>
+                <a href="/vehicles" class="sidebar-link {% if '/vehicles' in request.url.path %}active{% endif %}">
+                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m4 0h1a1 1 0 001-1v-4.586a1 1 0 00-.293-.707l-3.414-3.414A1 1 0 0016.586 6H14v10" />
+                    </svg>
+                    Araçlar
+                </a>
+                <a href="/work-orders"
+                    class="sidebar-link {% if '/work-orders' in request.url.path %}active{% endif %}">
+                    <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    İş Emirleri
+                </a>
+                <a href="/parts" class="sidebar-link {% if '/parts' in request.url.path %}active{% endif %}">
+                    <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    Stok / Parçalar
+                </a>
+
+                <div class="pt-3 mt-3 border-t border-white/10">
+                    <p class="px-3 pt-1 pb-2 text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
+                        Raporlar</p>
+                    <a href="/reports" class="sidebar-link {% if '/reports' in request.url.path %}active{% endif %}">
+                        <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Raporlar
+                    </a>
+                    <a href="/backup" class="sidebar-link {% if '/backup' in request.url.path %}active{% endif %}">
+                        <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                        </svg>
+                        Yedekleme
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User info -->
+            <div class="px-3 py-3 border-t border-white/10 bg-sidebar-900">
+                <div class="flex items-center gap-2.5 px-2">
+                    <div
+                        class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                        {{ user.full_name[0] if user else '?' }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate text-slate-200">{{ user.full_name if user else '' }}</p>
+                        <p class="text-[11px] text-slate-500">{{ user.role.value if user else '' }}</p>
+                    </div>
+                    <a href="/auth/logout" class="text-slate-500 hover:text-red-400 transition-colors" title="Çıkış">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-60 overflow-y-auto">
+            <!-- Top bar -->
+            <header class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">{% block page_title %}Panel{% endblock %}</h2>
+                        <p class="text-sm text-gray-500 mt-0.5">{% block page_subtitle %}{% endblock %}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {% block page_actions %}{% endblock %}
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <div class="p-8">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

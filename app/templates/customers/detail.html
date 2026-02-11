@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}{{ customer.full_name }} — OtoServis Pro{% endblock %}
+{% block page_title %}{{ customer.full_name }}{% endblock %}
+{% block page_subtitle %}{% if customer.type.value == 'corporate' %}Kurumsal{% else %}Bireysel{% endif %} Müşteri{%
+endblock %}
+{% block page_actions %}
+<a href="/customers/{{ customer.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
+<a href="/vehicles/create?customer_id={{ customer.id }}" class="btn-primary btn-sm">+ Araç Ekle</a>
+<a href="/work-orders/create?customer_id={{ customer.id }}" class="btn-success btn-sm">+ İş Emri</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">İletişim Bilgileri</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Telefon:</span> <span class="font-semibold">{{ customer.phone }}</span>
+            </div>
+            <div><span class="text-gray-500">E-posta:</span> {{ customer.email or '—' }}</div>
+            <div><span class="text-gray-500">Adres:</span> {{ customer.address or '—' }}</div>
+            <div><span class="text-gray-500">Şehir:</span> {{ customer.city or '—' }}</div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Vergi Bilgileri</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Firma:</span> {{ customer.company_name or '—' }}</div>
+            <div><span class="text-gray-500">Vergi No:</span> {{ customer.tax_number or '—' }}</div>
+            <div><span class="text-gray-500">Vergi Dairesi:</span> {{ customer.tax_office or '—' }}</div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Özet</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Araç Sayısı:</span> <span class="font-semibold">{{ vehicles|length
+                    }}</span></div>
+            <div><span class="text-gray-500">İş Emri Sayısı:</span> <span class="font-semibold">{{ work_orders|length
+                    }}</span></div>
+            <div><span class="text-gray-500">Bakiye:</span> <span
+                    class="font-semibold {% if customer.total_debt > 0 %}text-red-600{% endif %}">₺{{
+                    "{:,.2f}".format(customer.total_debt) }}</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Vehicles -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800">Araçlar</h3>
+    </div>
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Plaka</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Marka / Model</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Yıl</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">KM</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for v in vehicles %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-3"><a href="/vehicles/{{ v.id }}"
+                        class="text-primary-600 font-semibold hover:underline">{{ v.plate_number }}</a></td>
+                <td class="px-6 py-3 text-sm">{{ v.brand }} {{ v.model }}</td>
+                <td class="px-6 py-3 text-sm">{{ v.year or '—' }}</td>
+                <td class="px-6 py-3 text-sm">{{ v.current_km or '—' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-6 text-center text-gray-400">Araç bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Work Orders -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800">İş Emirleri</h3>
+    </div>
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Araç</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Durum</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for wo in work_orders %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-3"><a href="/work-orders/{{ wo.id }}"
+                        class="text-primary-600 font-semibold hover:underline">{{ wo.work_order_number }}</a></td>
+                <td class="px-6 py-3 text-sm">{{ wo.vehicle.plate_number }}</td>
+                <td class="px-6 py-3"><span
+                        class="badge {% if wo.status.value == 'completed' %}bg-emerald-100 text-emerald-700{% elif wo.status.value == 'in_progress' %}bg-purple-100 text-purple-700{% elif wo.status.value == 'pending' %}bg-yellow-100 text-yellow-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{
+                        wo.status.value }}</span></td>
+                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(wo.grand_total) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-6 text-center text-gray-400">İş emri bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

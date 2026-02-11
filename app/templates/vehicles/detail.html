@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ vehicle.plate_number }} — OtoServis Pro{% endblock %}
+{% block page_title %}{{ vehicle.plate_number }}{% endblock %}
+{% block page_subtitle %}{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year or '—' }}){% endblock %}
+{% block page_actions %}
+<a href="/vehicles/{{ vehicle.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
+<a href="/work-orders/create?vehicle_id={{ vehicle.id }}&customer_id={{ vehicle.customer_id }}"
+    class="btn-primary btn-sm">+ İş Emri</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Araç Bilgileri</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Plaka:</span> <span class="font-bold text-lg">{{ vehicle.plate_number
+                    }}</span></div>
+            <div><span class="text-gray-500">Marka / Model:</span> {{ vehicle.brand }} {{ vehicle.model }}</div>
+            <div><span class="text-gray-500">Yıl:</span> {{ vehicle.year or '—' }}</div>
+            <div><span class="text-gray-500">Yakıt:</span> {{ vehicle.fuel_type.value|capitalize if vehicle.fuel_type
+                else '—' }}</div>
+            <div><span class="text-gray-500">Vites:</span> {{ vehicle.transmission_type.value|capitalize if
+                vehicle.transmission_type else '—' }}</div>
+            <div><span class="text-gray-500">KM:</span> {{ vehicle.current_km or '—' }}</div>
+            <div><span class="text-gray-500">Şasi No:</span> {{ vehicle.chassis_number or '—' }}</div>
+            <div><span class="text-gray-500">Motor No:</span> {{ vehicle.engine_number or '—' }}</div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Müşteri</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Ad Soyad:</span> <a href="/customers/{{ vehicle.customer.id }}"
+                    class="text-primary-600 font-semibold hover:underline">{{ vehicle.customer.full_name }}</a></div>
+            <div><span class="text-gray-500">Telefon:</span> {{ vehicle.customer.phone }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800">İş Emirleri</h3>
+    </div>
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Durum</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tarih</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for wo in work_orders %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-3"><a href="/work-orders/{{ wo.id }}"
+                        class="text-primary-600 font-semibold hover:underline">{{ wo.work_order_number }}</a></td>
+                <td class="px-6 py-3"><span class="badge bg-gray-100 text-gray-700">{{ wo.status.value }}</span></td>
+                <td class="px-6 py-3 text-sm text-gray-600">{{ wo.created_at.strftime('%d.%m.%Y') if wo.created_at else
+                    '—' }}</td>
+                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(wo.grand_total) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-6 text-center text-gray-400">İş emri bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

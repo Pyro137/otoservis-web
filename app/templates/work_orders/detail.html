@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block title %}{{ wo.work_order_number }} — OtoServis Pro{% endblock %}
+{% block page_title %}İş Emri: {{ wo.work_order_number }}{% endblock %}
+{% block page_subtitle %}{{ wo.vehicle.plate_number }} — {{ wo.customer.full_name }}{% endblock %}
+{% block page_actions %}
+<a href="/work-orders/{{ wo.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <!-- Status & Info -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Durum</h4>
+        <div class="mb-4">
+            <span class="badge text-base px-4 py-2
+                {% if wo.status.value == 'pending' %}bg-yellow-100 text-yellow-700
+                {% elif wo.status.value == 'approved' %}bg-blue-100 text-blue-700
+                {% elif wo.status.value == 'in_progress' %}bg-purple-100 text-purple-700
+                {% elif wo.status.value == 'completed' %}bg-emerald-100 text-emerald-700
+                {% elif wo.status.value == 'delivered' %}bg-gray-200 text-gray-700
+                {% else %}bg-red-100 text-red-700{% endif %}">
+                {% if wo.status.value == 'pending' %}Bekliyor{% elif wo.status.value == 'approved' %}Onaylandı{% elif
+                wo.status.value == 'in_progress' %}Devam Ediyor{% elif wo.status.value == 'completed' %}Tamamlandı{%
+                elif wo.status.value == 'delivered' %}Teslim Edildi{% else %}İptal{% endif %}
+            </span>
+        </div>
+        {% if allowed_transitions %}
+        <form method="POST" action="/work-orders/{{ wo.id }}/status" class="flex flex-wrap gap-2">
+            {% for t in allowed_transitions %}
+            <button type="submit" name="new_status" value="{{ t.value }}" class="btn-sm
+                {% if t.value == 'approved' %}btn-primary
+                {% elif t.value == 'in_progress' %}btn-warning
+                {% elif t.value == 'completed' %}btn-success
+                {% elif t.value == 'delivered' %}btn-secondary
+                {% else %}btn-danger{% endif %}">
+                {% if t.value == 'approved' %}✅ Onayla{% elif t.value == 'in_progress' %}▶ Başlat{% elif t.value ==
+                'completed' %}✔ Tamamla{% elif t.value == 'delivered' %}📦 Teslim Et{% else %}❌ İptal{% endif %}
+            </button>
+            {% endfor %}
+        </form>
+        {% endif %}
+        <div class="mt-4 space-y-2 text-sm">
+            <div><span class="text-gray-500">Teknisyen:</span> {{ wo.technician.full_name if wo.technician else '—' }}
+            </div>
+            <div><span class="text-gray-500">Giriş KM:</span> {{ wo.km_in or '—' }}</div>
+            <div><span class="text-gray-500">Çıkış KM:</span> {{ wo.km_out or '—' }}</div>
+            <div><span class="text-gray-500">Yakıt:</span> {{ wo.fuel_level or '—' }}</div>
+        </div>
+    </div>
+
+    <!-- Customer & Vehicle -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Müşteri & Araç</h4>
+        <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Müşteri:</span> <a href="/customers/{{ wo.customer.id }}"
+                    class="text-primary-600 font-semibold hover:underline">{{ wo.customer.full_name }}</a></div>
+            <div><span class="text-gray-500">Telefon:</span> {{ wo.customer.phone }}</div>
+            <div class="border-t pt-3 mt-3"><span class="text-gray-500">Plaka:</span> <a
+                    href="/vehicles/{{ wo.vehicle.id }}" class="text-primary-600 font-bold hover:underline text-lg">{{
+                    wo.vehicle.plate_number }}</a></div>
+            <div><span class="text-gray-500">Araç:</span> {{ wo.vehicle.brand }} {{ wo.vehicle.model }} ({{
+                wo.vehicle.year or '—' }})</div>
+        </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Finansal Özet</h4>
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-500">İşçilik:</span> <span
+                    class="font-semibold">₺{{ "{:,.2f}".format(wo.labor_total) }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Parça:</span> <span class="font-semibold">₺{{
+                    "{:,.2f}".format(wo.parts_total) }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">İskonto:</span> <span
+                    class="font-semibold text-red-500">-₺{{ "{:,.2f}".format(wo.discount_total) }}</span></div>
+            <div class="flex justify-between border-t pt-2"><span class="text-gray-500">Ara Toplam:</span> <span
+                    class="font-semibold">₺{{ "{:,.2f}".format(wo.subtotal) }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">KDV (%{{ wo.vat_rate|int }}):</span> <span
+                    class="font-semibold">₺{{ "{:,.2f}".format(wo.vat_total) }}</span></div>
+            <div class="flex justify-between border-t pt-2 text-lg"><span class="font-bold">TOPLAM:</span> <span
+                    class="font-extrabold text-primary-700">₺{{ "{:,.2f}".format(wo.grand_total) }}</span></div>
+            <div class="flex justify-between pt-1"><span class="text-gray-500">Ödenen:</span> <span
+                    class="font-semibold text-emerald-600">₺{{ "{:,.2f}".format(total_paid) }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Kalan:</span> <span
+                    class="font-bold {% if remaining > 0 %}text-red-600{% else %}text-emerald-600{% endif %}">₺{{
+                    "{:,.2f}".format(remaining) }}</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Complaint & Notes -->
+{% if wo.complaint_description or wo.internal_notes %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    {% if wo.complaint_description %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-3">Müşteri Şikayeti</h4>
+        <p class="text-sm text-gray-700">{{ wo.complaint_description }}</p>
+    </div>
+    {% endif %}
+    {% if wo.internal_notes %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-3">Dahili Notlar</h4>
+        <p class="text-sm text-gray-700">{{ wo.internal_notes }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Items Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-lg font-bold text-gray-800">Kalemler</h3>
+    </div>
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tür</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Açıklama</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Miktar</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Birim Fiyat</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İskonto</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Toplam</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for item in wo.items %}
+            <tr>
+                <td class="px-6 py-3"><span
+                        class="badge {% if item.type.value == 'part' %}bg-blue-100 text-blue-700{% else %}bg-amber-100 text-amber-700{% endif %}">{%
+                        if item.type.value == 'part' %}Parça{% else %}İşçilik{% endif %}</span></td>
+                <td class="px-6 py-3 text-sm">{{ item.description }}</td>
+                <td class="px-6 py-3 text-right text-sm">{{ item.quantity }}</td>
+                <td class="px-6 py-3 text-right text-sm">₺{{ "{:,.2f}".format(item.unit_price) }}</td>
+                <td class="px-6 py-3 text-right text-sm">₺{{ "{:,.2f}".format(item.discount) }}</td>
+                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(item.total_price) }}</td>
+                <td class="px-6 py-3 text-right">
+                    <form method="POST" action="/work-orders/{{ wo.id }}/remove-item/{{ item.id }}"
+                        style="display:inline"><button type="submit" class="text-red-400 hover:text-red-600 text-xs"
+                            onclick="return confirm('Bu kalemi silmek istediğinizden emin misiniz?')">🗑</button></form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="px-6 py-6 text-center text-gray-400">Henüz kalem eklenmedi.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add Item Form -->
+    <div class="border-t border-gray-100 px-6 py-4 bg-gray-50">
+        <h4 class="text-sm font-semibold text-gray-600 mb-3">Yeni Kalem Ekle</h4>
+        <form method="POST" action="/work-orders/{{ wo.id }}/add-item"
+            class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Tür</label>
+                <select name="type" id="item_type" class="input-field text-sm" onchange="togglePartSelect()">
+                    <option value="labor">İşçilik</option>
+                    <option value="part">Parça</option>
+                </select>
+            </div>
+            <div id="part_select_wrapper" style="display:none">
+                <label class="block text-xs text-gray-500 mb-1">Parça</label>
+                <select name="part_id" id="part_select" class="input-field text-sm" onchange="fillPartDetails()">
+                    <option value="">Seçiniz...</option>
+                    {% for p in parts %}
+                    <option value="{{ p.id }}" data-price="{{ p.sale_price }}" data-name="{{ p.name }}">{{ p.stock_code
+                        }} — {{ p.name }} (Stok: {{ p.stock_quantity }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Açıklama</label>
+                <input type="text" name="description" id="item_desc" required class="input-field text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Miktar</label>
+                <input type="number" name="quantity" value="1" min="1" step="0.01" class="input-field text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Birim Fiyat</label>
+                <input type="number" name="unit_price" id="item_price" value="0" min="0" step="0.01"
+                    class="input-field text-sm">
+            </div>
+            <div class="flex gap-2 items-end">
+                <div class="flex-1">
+                    <label class="block text-xs text-gray-500 mb-1">İskonto</label>
+                    <input type="number" name="discount" value="0" min="0" step="0.01" class="input-field text-sm">
+                </div>
+                <button type="submit" class="btn-primary btn-sm whitespace-nowrap">+ Ekle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Payments & Invoice -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Payments -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800">Ödemeler</h3>
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for pay in payments %}
+            <div class="flex items-center justify-between px-6 py-3">
+                <div>
+                    <span class="font-semibold">₺{{ "{:,.2f}".format(pay.amount) }}</span>
+                    <span class="badge ml-2 bg-gray-100 text-gray-600">{% if pay.payment_method.value == 'cash'
+                        %}Nakit{% elif pay.payment_method.value == 'card' %}Kart{% else %}Havale{% endif %}</span>
+                </div>
+                <span class="text-xs text-gray-400">{{ pay.payment_date.strftime('%d.%m.%Y %H:%M') if pay.payment_date
+                    else '' }}</span>
+            </div>
+            {% else %}
+            <div class="px-6 py-6 text-center text-gray-400 text-sm">Ödeme kaydı yok.</div>
+            {% endfor %}
+        </div>
+        <div class="border-t px-6 py-4 bg-gray-50">
+            <form method="POST" action="/payments/work-order/{{ wo.id }}/pay" class="flex gap-3 items-end">
+                <div class="flex-1">
+                    <label class="block text-xs text-gray-500 mb-1">Tutar</label>
+                    <input type="number" name="amount" step="0.01" min="0" required class="input-field text-sm"
+                        value="{{ " {:.2f}".format(remaining) if remaining> 0 else '0' }}">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Yöntem</label>
+                    <select name="payment_method" class="input-field text-sm">
+                        <option value="cash">Nakit</option>
+                        <option value="card">Kart</option>
+                        <option value="transfer">Havale</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Referans</label>
+                    <input type="text" name="reference_number" class="input-field text-sm">
+                </div>
+                <button type="submit" class="btn-success btn-sm whitespace-nowrap">💰 Ödeme Al</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invoice -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800">Fatura</h3>
+        </div>
+        <div class="p-6">
+            {% if invoice %}
+            <div class="space-y-3 text-sm mb-4">
+                <div class="flex justify-between"><span class="text-gray-500">Fatura No:</span> <span
+                        class="font-bold">{{ invoice.invoice_number }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Tarih:</span> <span>{{
+                        invoice.issue_date.strftime('%d.%m.%Y') }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Durum:</span>
+                    <span
+                        class="badge {% if invoice.payment_status.value == 'paid' %}bg-emerald-100 text-emerald-700{% elif invoice.payment_status.value == 'partial' %}bg-amber-100 text-amber-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        {% if invoice.payment_status.value == 'paid' %}Ödendi{% elif invoice.payment_status.value ==
+                        'partial' %}Kısmi{% else %}Ödenmedi{% endif %}
+                    </span>
+                </div>
+                <div class="flex justify-between"><span class="text-gray-500">Toplam:</span> <span
+                        class="font-bold text-lg">₺{{ "{:,.2f}".format(invoice.grand_total) }}</span></div>
+            </div>
+            <a href="/payments/work-order/{{ wo.id }}/invoice/pdf" target="_blank"
+                class="btn-primary btn-sm w-full text-center block">📄 PDF İndir</a>
+            {% else %}
+            <p class="text-gray-400 text-sm mb-4">Henüz fatura oluşturulmadı.</p>
+            <form method="POST" action="/payments/work-order/{{ wo.id }}/invoice">
+                <button type="submit" class="btn-primary btn-sm w-full">📄 Fatura Oluştur</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function togglePartSelect() {
+        const type = document.getElementById('item_type').value;
+        document.getElementById('part_select_wrapper').style.display = type === 'part' ? '' : 'none';
+    }
+    function fillPartDetails() {
+        const select = document.getElementById('part_select');
+        const opt = select.options[select.selectedIndex];
+        if (opt.value) {
+            document.getElementById('item_desc').value = opt.dataset.name || '';
+            document.getElementById('item_price').value = opt.dataset.price || '0';
+        }
+    }
+</script>
+{% endblock %}

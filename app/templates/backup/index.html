@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Yedekleme — OtoServis Pro{% endblock %}
+{% block page_title %}Yedekleme{% endblock %}
+{% block page_subtitle %}Veritabanı yedekleme ve geri yükleme{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+    <!-- Create Backup -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Yeni Yedek Oluştur</h3>
+                <p class="text-sm text-gray-500 mt-1">Veritabanının anlık yedeğini alır.</p>
+            </div>
+            <form method="POST" action="/backup/create">
+                <button type="submit" class="btn-primary">💾 Yedek Al</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Backup List -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800">Mevcut Yedekler</h3>
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for b in backups %}
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-semibold text-sm text-gray-800">{{ b.filename }}</p>
+                    <p class="text-xs text-gray-500">{{ b.created }} — {{ b.size_mb }} MB</p>
+                </div>
+                <form method="POST" action="/backup/restore/{{ b.filename }}"
+                    onsubmit="return confirm('Bu yedeği geri yüklemek istediğinizden emin misiniz? Mevcut veriler yedeklenip üzerine yazılacaktır.')">
+                    <button type="submit" class="btn-warning btn-sm">🔄 Geri Yükle</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="px-6 py-8 text-center text-gray-400">Henüz yedek bulunmuyor.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

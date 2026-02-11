@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{% if vehicle %}Araç Düzenle{% else %}Yeni Araç{% endif %} — OtoServis Pro{% endblock %}
+{% block page_title %}{% if vehicle %}Araç Düzenle{% else %}Yeni Araç{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form method="POST"
+            action="{% if vehicle %}/vehicles/{{ vehicle.id }}/edit{% else %}/vehicles/create{% endif %}"
+            class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Müşteri *</label>
+                    <select name="customer_id" required class="input-field">
+                        <option value="">Seçiniz...</option>
+                        {% for c in customers %}
+                        <option value="{{ c.id }}" {% if (selected_customer_id and selected_customer_id==c.id) or
+                            (vehicle and vehicle.customer_id==c.id) %}selected{% endif %}>{{ c.full_name }} ({{ c.phone
+                            }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Plaka *</label>
+                    <input type="text" name="plate_number" value="{{ vehicle.plate_number if vehicle else '' }}"
+                        required class="input-field" style="text-transform:uppercase">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Marka *</label>
+                    <input type="text" name="brand" value="{{ vehicle.brand if vehicle else '' }}" required
+                        class="input-field">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Model *</label>
+                    <input type="text" name="model" value="{{ vehicle.model if vehicle else '' }}" required
+                        class="input-field">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Yıl</label>
+                    <input type="number" name="year" value="{{ vehicle.year if vehicle and vehicle.year else '' }}"
+                        class="input-field" min="1900" max="2030">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Yakıt Tipi</label>
+                    <select name="fuel_type" class="input-field">
+                        <option value="">Seçiniz...</option>
+                        {% for ft in fuel_types %}<option value="{{ ft.value }}" {% if vehicle and vehicle.fuel_type and
+                            vehicle.fuel_type.value==ft.value %}selected{% endif %}>{{ ft.value|capitalize }}</option>{%
+                        endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Vites Tipi</label>
+                    <select name="transmission_type" class="input-field">
+                        <option value="">Seçiniz...</option>
+                        {% for tt in transmission_types %}<option value="{{ tt.value }}" {% if vehicle and
+                            vehicle.transmission_type and vehicle.transmission_type.value==tt.value %}selected{% endif
+                            %}>{{ tt.value|capitalize }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Güncel KM</label>
+                    <input type="number" name="current_km"
+                        value="{{ vehicle.current_km if vehicle and vehicle.current_km else '' }}" class="input-field">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Şasi No</label>
+                    <input type="text" name="chassis_number" value="{{ vehicle.chassis_number if vehicle else '' }}"
+                        class="input-field">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Motor No</label>
+                    <input type="text" name="engine_number" value="{{ vehicle.engine_number if vehicle else '' }}"
+                        class="input-field">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Notlar</label>
+                <textarea name="notes" rows="2" class="input-field">{{ vehicle.notes if vehicle else '' }}</textarea>
+            </div>
+            <div class="flex items-center gap-3 pt-4">
+                <button type="submit" class="btn-primary">💾 Kaydet</button>
+                <a href="/vehicles" class="btn-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Müşteriler — OtoServis Pro{% endblock %}
+{% block page_title %}Müşteriler{% endblock %}
+{% block page_subtitle %}Toplam {{ total }} müşteri{% endblock %}
+{% block page_actions %}<a href="/customers/create" class="btn-primary">+ Yeni Müşteri</a>{% endblock %}
+
+{% block content %}
+<!-- Search -->
+<div class="mb-6">
+    <form method="GET" class="flex gap-3">
+        <input type="text" name="q" value="{{ q }}" placeholder="İsim, telefon veya vergi no ile ara..."
+            class="input-field max-w-md">
+        <button type="submit" class="btn-primary">Ara</button>
+        {% if q %}<a href="/customers" class="btn-secondary">Temizle</a>{% endif %}
+    </form>
+</div>
+
+<div class="table-container">
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ad Soyad</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tür</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Telefon</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Şehir</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Bakiye</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for c in customers %}
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4"><a href="/customers/{{ c.id }}"
+                        class="text-primary-600 font-semibold hover:underline">{{ c.full_name }}</a></td>
+                <td class="px-6 py-4 text-sm">
+                    <span
+                        class="badge {% if c.type.value == 'corporate' %}bg-purple-100 text-purple-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                        {% if c.type.value == 'corporate' %}Kurumsal{% else %}Bireysel{% endif %}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ c.phone }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ c.city or '—' }}</td>
+                <td
+                    class="px-6 py-4 text-right font-semibold {% if c.total_debt > 0 %}text-red-600{% else %}text-gray-800{% endif %}">
+                    ₺{{ "{:,.2f}".format(c.total_debt) }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="/customers/{{ c.id }}/edit" class="text-gray-400 hover:text-primary-600 transition-colors">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-400">Müşteri bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="flex items-center justify-center gap-2 mt-6">
+    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">←
+        Önceki</a>{% endif %}
+    <span class="text-sm text-gray-500">Sayfa {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">
+        Sonraki →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}
