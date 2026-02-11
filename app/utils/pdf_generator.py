@@ -256,3 +256,227 @@ def generate_invoice_pdf(work_order, invoice, company_info: dict = None) -> Byte
     doc.build(elements)
     buffer.seek(0)
     return buffer
+
+
+def generate_proposal_pdf(work_order, company_info: dict = None) -> BytesIO:
+    """Generate a professional job proposal (İş Teklifi) PDF with Turkish character support."""
+    _register_fonts()
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=20 * mm,
+        leftMargin=20 * mm,
+        topMargin=15 * mm,
+        bottomMargin=20 * mm,
+    )
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # ── Custom styles ──
+    title_style = ParagraphStyle(
+        "ProposalTitle", parent=styles["Title"],
+        fontSize=22, textColor=PRIMARY, spaceAfter=2 * mm,
+        fontName=FONT_BOLD,
+    )
+    header_style = ParagraphStyle(
+        "Header", parent=styles["Normal"],
+        fontSize=10, textColor=DARK, fontName=FONT_BOLD,
+    )
+    normal_style = ParagraphStyle(
+        "NormalText", parent=styles["Normal"],
+        fontSize=9, textColor=DARK, leading=14, fontName=FONT,
+    )
+    small_style = ParagraphStyle(
+        "SmallText", parent=styles["Normal"],
+        fontSize=8, textColor=GRAY, leading=12, fontName=FONT,
+    )
+
+    info = company_info or {
+        "name": "OtoServis Pro",
+        "address": "Servis Adresi",
+        "phone": "0212 000 00 00",
+        "tax_office": "Vergi Dairesi",
+        "tax_number": "1234567890",
+    }
+
+    # ── Proposal Header ──
+    right_title = ParagraphStyle(
+        "Right", parent=title_style, alignment=TA_RIGHT, fontSize=16
+    )
+    header_data = [
+        [
+            Paragraph(f"<b>{info['name']}</b>", title_style),
+            Paragraph(
+                f"<b>İŞ TEKLİFİ</b><br/><font size=9>{work_order.work_order_number}</font>",
+                right_title,
+            ),
+        ],
+        [
+            Paragraph(
+                f"{info['address']}<br/>Tel: {info['phone']}<br/>VD: {info['tax_office']} / {info['tax_number']}",
+                small_style,
+            ),
+            Paragraph(
+                f"<b>Tarih:</b> {work_order.created_at.strftime('%d.%m.%Y')}<br/><b>İş Emri:</b> {work_order.work_order_number}",
+                ParagraphStyle("RightSmall", parent=small_style, alignment=TA_RIGHT),
+            ),
+        ],
+    ]
+    header_table = Table(header_data, colWidths=[doc.width * 0.55, doc.width * 0.45])
+    header_table.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 8 * mm))
+
+    # ── Customer & Vehicle Info ──
+    customer = work_order.customer
+    vehicle = work_order.vehicle
+
+    info_data = [
+        [
+            Paragraph("<b>MÜŞTERİ BİLGİLERİ</b>", header_style),
+            Paragraph("<b>ARAÇ BİLGİLERİ</b>", header_style),
+        ],
+        [
+            Paragraph(
+                f"{customer.full_name}<br/>Tel: {customer.phone}<br/>{customer.address or ''}<br/>"
+                f"{f'VKN: {customer.tax_number}' if customer.tax_number else ''}",
+                normal_style,
+            ),
+            Paragraph(
+                f"Plaka: <b>{vehicle.plate_number}</b><br/>"
+                f"{vehicle.brand} {vehicle.model} ({vehicle.year or '-'})<br/>"
+                f"KM: {work_order.km_in or '-'}",
+                normal_style,
+            ),
+        ],
+    ]
+    info_table = Table(info_data, colWidths=[doc.width * 0.5, doc.width * 0.5])
+    info_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BG),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
+        ("TOPPADDING", (0, 0), (-1, 0), 6),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 1), (-1, 1), 10),
+        ("TOPPADDING", (0, 1), (-1, 1), 6),
+        ("BOX", (0, 0), (-1, -1), 0.5, BORDER),
+        ("LINEBELOW", (0, 0), (-1, 0), 0.5, BORDER),
+        ("LINEBETWEEN", (0, 0), (-1, -1), 0.5, BORDER),
+    ]))
+    elements.append(info_table)
+    elements.append(Spacer(1, 4 * mm))
+
+    # ── Complaint / Description ──
+    if work_order.complaint_description:
+        elements.append(Paragraph("<b>MÜŞTERİ ŞİKAYETİ / TALEP</b>", header_style))
+        elements.append(Spacer(1, 2 * mm))
+        elements.append(Paragraph(work_order.complaint_description, normal_style))
+        elements.append(Spacer(1, 4 * mm))
+
+    # ── Proposed Items Table ──
+    items_header = ["#", "Açıklama", "Tür", "Miktar", "Birim Fiyat", "İskonto", "Tahmini Tutar"]
+    items_data = [items_header]
+
+    for idx, item in enumerate(work_order.items, 1):
+        items_data.append([
+            str(idx),
+            item.description,
+            "Parça" if item.type.value == "part" else "İşçilik",
+            f"{item.quantity:.0f}",
+            f"₺{item.unit_price:,.2f}",
+            f"₺{item.discount:,.2f}",
+            f"₺{item.total_price:,.2f}",
+        ])
+
+    col_widths = [doc.width * w for w in [0.05, 0.32, 0.1, 0.1, 0.14, 0.14, 0.15]]
+    items_table = Table(items_data, colWidths=col_widths, repeatRows=1)
+    items_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), PRIMARY),
+        ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
+        ("FONTNAME", (0, 0), (-1, 0), FONT_BOLD),
+        ("FONTNAME", (0, 1), (-1, -1), FONT),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (0, 0), (0, -1), "CENTER"),
+        ("ALIGN", (3, 0), (-1, -1), "RIGHT"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("TOPPADDING", (0, 0), (-1, 0), 8),
+        ("BOTTOMPADDING", (0, 1), (-1, -1), 5),
+        ("TOPPADDING", (0, 1), (-1, -1), 5),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [WHITE, LIGHT_BG]),
+        ("BOX", (0, 0), (-1, -1), 0.5, BORDER),
+        ("LINEBELOW", (0, 0), (-1, -2), 0.25, BORDER),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    elements.append(items_table)
+    elements.append(Spacer(1, 6 * mm))
+
+    # ── Totals ──
+    totals_data = [
+        ["Ara Toplam:", f"₺{work_order.subtotal:,.2f}"],
+        ["İskonto Toplam:", f"-₺{work_order.discount_total:,.2f}"],
+        [f"KDV (%{work_order.vat_rate:.0f}):", f"₺{work_order.vat_total:,.2f}"],
+        ["TAHMİNİ TOPLAM:", f"₺{work_order.grand_total:,.2f}"],
+    ]
+    totals_table = Table(totals_data, colWidths=[doc.width * 0.3, doc.width * 0.2], hAlign="RIGHT")
+    totals_table.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (0, -1), "RIGHT"),
+        ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("FONTNAME", (0, 0), (-1, -2), FONT),
+        ("FONTNAME", (0, -1), (-1, -1), FONT_BOLD),
+        ("BACKGROUND", (0, -1), (-1, -1), PRIMARY),
+        ("TEXTCOLOR", (0, -1), (-1, -1), WHITE),
+        ("TOPPADDING", (0, -1), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, -1), (-1, -1), 8),
+        ("LINEBELOW", (0, 0), (-1, -2), 0.25, BORDER),
+        ("BOTTOMPADDING", (0, 0), (-1, -2), 4),
+        ("TOPPADDING", (0, 0), (-1, -2), 4),
+    ]))
+    elements.append(totals_table)
+    elements.append(Spacer(1, 10 * mm))
+
+    # ── Validity Notice ──
+    notice_style = ParagraphStyle(
+        "Notice", parent=normal_style,
+        fontSize=8, textColor=GRAY, alignment=TA_LEFT, leading=12,
+    )
+    elements.append(Paragraph(
+        "<b>Not:</b> Bu teklif düzenlenme tarihinden itibaren <b>30 gün</b> geçerlidir. "
+        "Fiyatlara KDV dahildir. Parça fiyatları tedarik koşullarına göre değişiklik gösterebilir. "
+        "İş süresi, aracın mevcut durumuna göre farklılık gösterebilir.",
+        notice_style,
+    ))
+    elements.append(Spacer(1, 10 * mm))
+
+    # ── Acceptance Signature ──
+    sig_normal = ParagraphStyle("Sig", parent=normal_style, alignment=TA_CENTER)
+    sig_small = ParagraphStyle("SigSmall", parent=small_style, alignment=TA_CENTER)
+    sig_data = [
+        [
+            Paragraph("<b>Teklifi Veren</b>", sig_normal),
+            Paragraph("<b>Müşteri Onayı</b>", sig_normal),
+        ],
+        ["", ""],
+        [
+            Paragraph("İmza / Kaşe", sig_small),
+            Paragraph("İmza / Tarih", sig_small),
+        ],
+    ]
+    sig_table = Table(sig_data, colWidths=[doc.width * 0.4, doc.width * 0.4], rowHeights=[20, 50, 20])
+    sig_table.setStyle(TableStyle([
+        ("LINEBELOW", (0, 1), (0, 1), 0.5, DARK),
+        ("LINEBELOW", (1, 1), (1, 1), 0.5, DARK),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+    ]))
+    sig_table.hAlign = "CENTER"
+    elements.append(sig_table)
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer

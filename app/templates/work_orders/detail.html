@@ -194,8 +194,8 @@
     </div>
 </div>
 
-<!-- Payments & Invoice -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Payments, Invoice & Proposal -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Payments -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">
@@ -217,25 +217,29 @@
             {% endfor %}
         </div>
         <div class="border-t px-6 py-4 bg-gray-50">
-            <form method="POST" action="/payments/work-order/{{ wo.id }}/pay" class="flex gap-3 items-end">
-                <div class="flex-1">
-                    <label class="block text-xs text-gray-500 mb-1">Tutar</label>
-                    <input type="number" name="amount" step="0.01" min="0" required class="input-field text-sm"
-                        value="{{ " {:.2f}".format(remaining) if remaining> 0 else '0' }}">
+            <form method="POST" action="/payments/work-order/{{ wo.id }}/pay" class="flex flex-col gap-3">
+                <div class="flex gap-3 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs text-gray-500 mb-1">Tutar</label>
+                        <input type="number" name="amount" step="0.01" min="0" required class="input-field text-sm"
+                            value="{{ " {:.2f}".format(remaining) if remaining> 0 else '0' }}">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Yöntem</label>
+                        <select name="payment_method" class="input-field text-sm">
+                            <option value="cash">Nakit</option>
+                            <option value="card">Kart</option>
+                            <option value="transfer">Havale</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Yöntem</label>
-                    <select name="payment_method" class="input-field text-sm">
-                        <option value="cash">Nakit</option>
-                        <option value="card">Kart</option>
-                        <option value="transfer">Havale</option>
-                    </select>
+                <div class="flex gap-3 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs text-gray-500 mb-1">Referans</label>
+                        <input type="text" name="reference_number" class="input-field text-sm">
+                    </div>
+                    <button type="submit" class="btn-success btn-sm whitespace-nowrap">💰 Ödeme Al</button>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Referans</label>
-                    <input type="text" name="reference_number" class="input-field text-sm">
-                </div>
-                <button type="submit" class="btn-success btn-sm whitespace-nowrap">💰 Ödeme Al</button>
             </form>
         </div>
     </div>
@@ -270,6 +274,23 @@
                 <button type="submit" class="btn-primary btn-sm w-full">📄 Fatura Oluştur</button>
             </form>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- Job Proposal (İş Teklifi) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800">İş Teklifi</h3>
+        </div>
+        <div class="p-6">
+            <div class="space-y-3 text-sm mb-4">
+                <div class="flex justify-between"><span class="text-gray-500">İş Emri:</span> <span class="font-bold">{{ wo.work_order_number }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Tahmini Tutar:</span> <span class="font-bold text-lg">₺{{ "{:,.2f}".format(wo.grand_total) }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Kalem Sayısı:</span> <span class="font-semibold">{{ wo.items|length }}</span></div>
+            </div>
+            <p class="text-gray-400 text-xs mb-4">Müşteriye göndermek için iş teklifi PDF'ini indirin.</p>
+            <a href="/payments/work-order/{{ wo.id }}/proposal/pdf" target="_blank"
+                class="btn-sm w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200">📋 İş Teklifi PDF İndir</a>
         </div>
     </div>
 </div>

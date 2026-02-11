@@ -8,7 +8,7 @@ from app.core.enums import PaymentMethod, PaymentStatus
 from app.services.payment_service import PaymentService
 from app.services.invoice_service import InvoiceService
 from app.services.work_order_service import WorkOrderService
-from app.utils.pdf_generator import generate_invoice_pdf
+from app.utils.pdf_generator import generate_invoice_pdf, generate_proposal_pdf
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -89,6 +89,26 @@ async def download_invoice_pdf(
         pdf_buffer,
         media_type="application/pdf",
         headers={"Content-Disposition": f"inline; filename=fatura_{invoice.invoice_number}.pdf"},
+    )
+
+
+@router.get("/work-order/{wo_id}/proposal/pdf")
+async def download_proposal_pdf(
+    wo_id: int,
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    wo_service = WorkOrderService(db)
+    wo = wo_service.get_by_id(wo_id)
+    if not wo:
+        return RedirectResponse(f"/work-orders/{wo_id}", status_code=303)
+
+    pdf_buffer = generate_proposal_pdf(wo)
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"inline; filename=teklif_{wo.work_order_number}.pdf"},
     )
 
 
