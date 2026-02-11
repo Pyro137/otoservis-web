@@ -2,50 +2,62 @@
 {% block title %}Müşteriler — OtoServis Pro{% endblock %}
 {% block page_title %}Müşteriler{% endblock %}
 {% block page_subtitle %}Toplam {{ total }} müşteri{% endblock %}
-{% block page_actions %}<a href="/customers/create" class="btn-primary">+ Yeni Müşteri</a>{% endblock %}
+{% block page_actions %}<a href="/customers/create" class="btn-gradient-primary flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Yeni Müşteri
+</a>{% endblock %}
 
 {% block content %}
 <!-- Search -->
-<div class="mb-6">
+<div class="mb-6 animate-in">
     <form method="GET" class="flex gap-3">
         <input type="text" name="q" value="{{ q }}" placeholder="İsim, telefon veya vergi no ile ara..."
-            class="input-field max-w-md">
-        <button type="submit" class="btn-primary">Ara</button>
+            class="search-premium max-w-md flex-1 text-sm outline-none">
+        <button type="submit" class="btn-gradient-primary">Ara</button>
         {% if q %}<a href="/customers" class="btn-secondary">Temizle</a>{% endif %}
     </form>
 </div>
 
-<div class="table-container">
+<div class="table-premium animate-in-delayed">
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ad Soyad</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tür</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Telefon</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Şehir</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Bakiye</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ad Soyad
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tür</th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Telefon
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Şehir
+                </th>
+                <th class="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Bakiye
+                </th>
+                <th class="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">İşlem
+                </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for c in customers %}
-            <tr class="hover:bg-gray-50 transition-colors">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200 group"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-4"><a href="/customers/{{ c.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ c.full_name }}</a></td>
                 <td class="px-6 py-4 text-sm">
                     <span
-                        class="badge {% if c.type.value == 'corporate' %}bg-purple-100 text-purple-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                        class="badge-premium {% if c.type.value == 'corporate' %}bg-violet-50 text-violet-700{% else %}bg-blue-50 text-blue-700{% endif %}">
                         {% if c.type.value == 'corporate' %}Kurumsal{% else %}Bireysel{% endif %}
                     </span>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ c.phone }}</td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ c.city or '—' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ c.phone }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ c.city or '—' }}</td>
                 <td
                     class="px-6 py-4 text-right font-semibold {% if c.total_debt > 0 %}text-red-600{% else %}text-gray-800{% endif %}">
                     ₺{{ "{:,.2f}".format(c.total_debt) }}</td>
                 <td class="px-6 py-4 text-right">
-                    <a href="/customers/{{ c.id }}/edit" class="text-gray-400 hover:text-primary-600 transition-colors">
-                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="/customers/{{ c.id }}/edit"
+                        class="text-gray-300 hover:text-primary-600 transition-colors p-1.5 rounded-lg hover:bg-blue-50 inline-flex">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
@@ -54,7 +66,15 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-400">Müşteri bulunamadı.</td>
+                <td colspan="6" class="px-6 py-12">
+                    <div class="empty-state">
+                        <svg class="text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <p class="text-sm">Müşteri bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -64,10 +84,10 @@
 <!-- Pagination -->
 {% if total_pages > 1 %}
 <div class="flex items-center justify-center gap-2 mt-6">
-    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">←
+    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="pagination-pill">←
         Önceki</a>{% endif %}
-    <span class="text-sm text-gray-500">Sayfa {{ page }} / {{ total_pages }}</span>
-    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">
+    <span class="pagination-pill active">{{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="pagination-pill">
         Sonraki →</a>{% endif %}
 </div>
 {% endif %}

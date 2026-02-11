@@ -5,27 +5,22 @@
 
 {% block content %}
 <!-- Report Type Tabs -->
-<div class="flex flex-wrap gap-2 mb-6">
+<div class="flex flex-wrap gap-2 mb-6 animate-in">
     <a href="/reports?report_type=revenue&start_date={{ start_date }}&end_date={{ end_date }}"
-        class="btn-sm {% if report_type == 'revenue' %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">💰
-        Gelir</a>
+        class="filter-pill {% if report_type == 'revenue' %}active{% endif %}">💰 Gelir</a>
     <a href="/reports?report_type=technician&start_date={{ start_date }}&end_date={{ end_date }}"
-        class="btn-sm {% if report_type == 'technician' %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">👨‍🔧
-        Teknisyen</a>
+        class="filter-pill {% if report_type == 'technician' %}active{% endif %}">👨‍🔧 Teknisyen</a>
     <a href="/reports?report_type=vehicles&start_date={{ start_date }}&end_date={{ end_date }}"
-        class="btn-sm {% if report_type == 'vehicles' %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">🚗
-        Araçlar</a>
+        class="filter-pill {% if report_type == 'vehicles' %}active{% endif %}">🚗 Araçlar</a>
     <a href="/reports?report_type=parts&start_date={{ start_date }}&end_date={{ end_date }}"
-        class="btn-sm {% if report_type == 'parts' %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">📦
-        Parçalar</a>
-    <a href="/reports?report_type=debt"
-        class="btn-sm {% if report_type == 'debt' %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">💳
+        class="filter-pill {% if report_type == 'parts' %}active{% endif %}">📦 Parçalar</a>
+    <a href="/reports?report_type=debt" class="filter-pill {% if report_type == 'debt' %}active{% endif %}">💳
         Borçlar</a>
 </div>
 
 <!-- Date Filter -->
 {% if report_type != 'debt' %}
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+<div class="detail-card accent-blue p-4 mb-6 animate-in">
     <form method="GET" class="flex items-end gap-4">
         <input type="hidden" name="report_type" value="{{ report_type }}">
         <div>
@@ -36,142 +31,168 @@
             <label class="block text-xs text-gray-500 mb-1">Bitiş</label>
             <input type="date" name="end_date" value="{{ end_date }}" class="input-field text-sm">
         </div>
-        <button type="submit" class="btn-primary btn-sm">Filtrele</button>
+        <button type="submit" class="btn-gradient-primary btn-sm">Filtrele</button>
     </form>
 </div>
 {% endif %}
 
 <!-- Report Content -->
-<div class="table-container">
+<div class="table-premium animate-in-delayed">
     {% if report_type == 'revenue' %}
-    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="font-bold text-gray-800">Gelir Raporu</h3>
+    <div class="section-header">
+        <h3>Gelir Raporu</h3>
         <span class="text-lg font-extrabold text-emerald-600">Toplam: ₺{{ "{:,.2f}".format(total_revenue) }}</span>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">İş Emri</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Araç</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tarih</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">İş Emri
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Araç</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tarih</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for o in orders %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/work-orders/{{ o.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ o.work_order_number }}</a></td>
-                <td class="px-6 py-3 text-sm">{{ o.vehicle.plate_number }}</td>
-                <td class="px-6 py-3 text-sm">{{ o.customer.full_name }}</td>
-                <td class="px-6 py-3 text-sm text-gray-500">{{ o.completed_at.strftime('%d.%m.%Y') if o.completed_at
+                <td class="px-6 py-3 text-sm text-gray-500">{{ o.vehicle.plate_number }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ o.customer.full_name }}</td>
+                <td class="px-6 py-3 text-sm text-gray-400">{{ o.completed_at.strftime('%d.%m.%Y') if o.completed_at
                     else '—' }}</td>
-                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(o.grand_total) }}</td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800">₺{{ "{:,.2f}".format(o.grand_total) }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="5" class="px-6 py-8 text-center text-gray-400">Kayıt bulunamadı.</td>
+                <td colspan="5" class="px-6 py-8">
+                    <div class="empty-state">
+                        <p class="text-sm">Kayıt bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     {% elif report_type == 'technician' %}
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-bold text-gray-800">Teknisyen Performansı</h3>
+    <div class="section-header">
+        <h3>Teknisyen Performansı</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Teknisyen</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tamamlanan İş</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Toplam Gelir</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Teknisyen
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Tamamlanan
+                    İş</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Toplam
+                    Gelir</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for ts in tech_stats %}
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-3 font-semibold">{{ ts.tech.full_name }}</td>
-                <td class="px-6 py-3 text-right">{{ ts.count }}</td>
-                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(ts.revenue) }}</td>
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
+                <td class="px-6 py-3 font-semibold text-gray-700">{{ ts.tech.full_name }}</td>
+                <td class="px-6 py-3 text-right text-gray-600">{{ ts.count }}</td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800">₺{{ "{:,.2f}".format(ts.revenue) }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     {% elif report_type == 'vehicles' %}
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-bold text-gray-800">En Çok Servis Gören Araçlar</h3>
+    <div class="section-header">
+        <h3>En Çok Servis Gören Araçlar</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Plaka</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Marka / Model</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İş Emri Sayısı</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plaka</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Marka /
+                    Model</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">İş Emri
+                    Sayısı</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for v, count in vehicle_stats %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/vehicles/{{ v.id }}"
                         class="text-primary-600 font-bold hover:underline">{{ v.plate_number }}</a></td>
-                <td class="px-6 py-3 text-sm">{{ v.brand }} {{ v.model }}</td>
-                <td class="px-6 py-3 text-sm">{{ v.customer.full_name }}</td>
-                <td class="px-6 py-3 text-right font-bold text-lg">{{ count }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ v.brand }} {{ v.model }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ v.customer.full_name }}</td>
+                <td class="px-6 py-3 text-right font-bold text-lg text-gray-800">{{ count }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     {% elif report_type == 'parts' %}
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-bold text-gray-800">En Çok Kullanılan Parçalar</h3>
+    <div class="section-header">
+        <h3>En Çok Kullanılan Parçalar</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Stok Kodu</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Parça Adı</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Toplam Kullanım</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Stok Kodu
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Parça Adı
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Toplam
+                    Kullanım</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for name, code, total_used in part_stats %}
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-3 font-mono text-sm">{{ code }}</td>
-                <td class="px-6 py-3">{{ name }}</td>
-                <td class="px-6 py-3 text-right font-bold">{{ total_used }}</td>
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
+                <td class="px-6 py-3 font-mono text-sm text-primary-600">{{ code }}</td>
+                <td class="px-6 py-3 text-gray-700">{{ name }}</td>
+                <td class="px-6 py-3 text-right font-bold text-gray-800">{{ total_used }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     {% elif report_type == 'debt' %}
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-bold text-gray-800">Müşteri Borç Özeti</h3>
+    <div class="section-header">
+        <h3>Müşteri Borç Özeti</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Telefon</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Borç</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Telefon
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Borç</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for c in customers_with_debt %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/customers/{{ c.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ c.full_name }}</a></td>
-                <td class="px-6 py-3 text-sm">{{ c.phone }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ c.phone }}</td>
                 <td class="px-6 py-3 text-right font-bold text-red-600">₺{{ "{:,.2f}".format(c.total_debt) }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="3" class="px-6 py-8 text-center text-gray-400">Borçlu müşteri yok.</td>
+                <td colspan="3" class="px-6 py-8">
+                    <div class="empty-state">
+                        <p class="text-sm">Borçlu müşteri yok.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

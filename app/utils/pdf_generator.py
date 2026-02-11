@@ -91,9 +91,9 @@ def generate_invoice_pdf(work_order, invoice, company_info: dict = None) -> Byte
     )
 
     info = company_info or {
-        "name": "OtoServis Pro",
-        "address": "Servis Adresi",
-        "phone": "0212 000 00 00",
+        "name": "Classic Car",
+        "address": "Yeşiloba Mah. 46257. Sk. Adana Otosanayi Sitesi M Blok No:7/13 İç Kapı No:Z09 Seyhan/Adana",
+        "phone": "0538 832 47 25",
         "tax_office": "Vergi Dairesi",
         "tax_number": "1234567890",
     }

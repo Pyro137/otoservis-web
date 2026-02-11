@@ -26,15 +26,15 @@
     <style>
         /* ── Sidebar ── */
         .sidebar-link {
-            @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-300;
+            @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400;
         }
 
         .sidebar-link:hover {
-            @apply bg-white/10 text-white;
+            @apply text-white;
         }
 
         .sidebar-link.active {
-            @apply bg-primary-600/80 text-white shadow-lg;
+            @apply text-white;
         }
 
         .sidebar-link svg {
@@ -68,10 +68,10 @@
             @apply text-xs py-1.5 px-3 rounded-lg;
         }
 
-        /* ── Input Fields — strong visible strokes ── */
+        /* ── Input Fields ── */
         .input-field {
             @apply w-full px-4 py-2.5 rounded-xl text-sm text-gray-900 outline-none transition-all duration-200 bg-white placeholder-gray-400;
-            border: 2px solid #cbd5e1;
+            border: 2px solid #e2e8f0;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
@@ -81,7 +81,7 @@
 
         .input-field:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12), 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
         select.input-field {
@@ -114,62 +114,51 @@
         .badge {
             @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
         }
-
-        /* ── Scrollbar ── */
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 2px;
-        }
     </style>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
-<body class="h-full bg-gray-50 font-sans">
+<body class="h-full bg-gray-50/80 font-sans">
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="w-60 bg-sidebar-900 text-white flex flex-col fixed h-full z-30">
-            <!-- Logo — icon and text side by side -->
-            <div class="px-5 py-4 border-b border-white/10 flex items-center gap-3">
-                <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+        <aside class="w-64 sidebar-gradient text-white flex flex-col fixed h-full z-30">
+            <!-- Logo -->
+            <div class="px-5 py-5 border-b border-white/5 flex items-center gap-3.5">
+                <div
+                    class="sidebar-logo-glow w-10 h-10 bg-gradient-to-br from-blue-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-base font-bold leading-tight truncate">OtoServis</h1>
-                    <p class="text-[11px] text-slate-400 leading-tight">Yönetim Paneli</p>
+                    <h1 class="text-base font-bold leading-tight truncate tracking-tight">OtoServis</h1>
+                    <p class="text-[11px] text-slate-500 leading-tight">Yönetim Paneli</p>
                 </div>
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto sidebar-nav">
-                <p class="px-3 pt-1 pb-2 text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Ana Menü
-                </p>
-                <a href="/" class="sidebar-link {% if request.url.path == '/' %}active{% endif %}">
-                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto sidebar-nav">
+                <p class="px-3 pt-1 pb-2.5 text-[10px] text-slate-600 uppercase tracking-[0.15em] font-semibold">Ana
+                    Menü</p>
+                <a href="/" class="sidebar-link sidebar-link-modern {% if request.url.path == '/' %}active{% endif %}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                     </svg>
                     Panel
                 </a>
-                <a href="/customers" class="sidebar-link {% if '/customers' in request.url.path %}active{% endif %}">
-                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="/customers"
+                    class="sidebar-link sidebar-link-modern {% if '/customers' in request.url.path %}active{% endif %}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     Müşteriler
                 </a>
-                <a href="/vehicles" class="sidebar-link {% if '/vehicles' in request.url.path %}active{% endif %}">
-                    <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="/vehicles"
+                    class="sidebar-link sidebar-link-modern {% if '/vehicles' in request.url.path %}active{% endif %}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                             d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -178,33 +167,36 @@
                     Araçlar
                 </a>
                 <a href="/work-orders"
-                    class="sidebar-link {% if '/work-orders' in request.url.path %}active{% endif %}">
-                    <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link sidebar-link-modern {% if '/work-orders' in request.url.path %}active{% endif %}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                     İş Emirleri
                 </a>
-                <a href="/parts" class="sidebar-link {% if '/parts' in request.url.path %}active{% endif %}">
-                    <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="/parts"
+                    class="sidebar-link sidebar-link-modern {% if '/parts' in request.url.path %}active{% endif %}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
                     Stok / Parçalar
                 </a>
 
-                <div class="pt-3 mt-3 border-t border-white/10">
-                    <p class="px-3 pt-1 pb-2 text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
-                        Raporlar</p>
-                    <a href="/reports" class="sidebar-link {% if '/reports' in request.url.path %}active{% endif %}">
-                        <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="pt-4 mt-4 border-t border-white/5">
+                    <p class="px-3 pt-1 pb-2.5 text-[10px] text-slate-600 uppercase tracking-[0.15em] font-semibold">
+                        Sistem</p>
+                    <a href="/reports"
+                        class="sidebar-link sidebar-link-modern {% if '/reports' in request.url.path %}active{% endif %}">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         Raporlar
                     </a>
-                    <a href="/backup" class="sidebar-link {% if '/backup' in request.url.path %}active{% endif %}">
-                        <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="/backup"
+                        class="sidebar-link sidebar-link-modern {% if '/backup' in request.url.path %}active{% endif %}">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                         </svg>
@@ -214,18 +206,24 @@
             </nav>
 
             <!-- User info -->
-            <div class="px-3 py-3 border-t border-white/10 bg-sidebar-900">
-                <div class="flex items-center gap-2.5 px-2">
-                    <div
-                        class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                        {{ user.full_name[0] if user else '?' }}
+            <div class="px-4 py-4 border-t border-white/5">
+                <div class="flex items-center gap-3 px-2">
+                    <div class="relative">
+                        <div class="avatar-ring w-9 h-9">
+                            <div class="avatar-ring-inner w-full h-full text-xs font-bold text-white">
+                                {{ user.full_name[0] if user else '?' }}
+                            </div>
+                        </div>
+                        <div class="online-dot"></div>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium truncate text-slate-200">{{ user.full_name if user else '' }}</p>
-                        <p class="text-[11px] text-slate-500">{{ user.role.value if user else '' }}</p>
+                        <p class="text-[11px] text-slate-500 capitalize">{{ user.role.value if user else '' }}</p>
                     </div>
-                    <a href="/auth/logout" class="text-slate-500 hover:text-red-400 transition-colors" title="Çıkış">
-                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="/auth/logout"
+                        class="text-slate-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-white/5"
+                        title="Çıkış">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
@@ -235,13 +233,14 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 ml-60 overflow-y-auto">
+        <main class="flex-1 ml-64 overflow-y-auto">
             <!-- Top bar -->
-            <header class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20 shadow-sm">
+            <header class="topbar-premium px-8 py-4 sticky top-0 z-20">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-800">{% block page_title %}Panel{% endblock %}</h2>
-                        <p class="text-sm text-gray-500 mt-0.5">{% block page_subtitle %}{% endblock %}</p>
+                        <h2 class="text-xl font-bold text-gray-800 tracking-tight">{% block page_title %}Panel{%
+                            endblock %}</h2>
+                        <p class="text-sm text-gray-400 mt-0.5">{% block page_subtitle %}{% endblock %}</p>
                     </div>
                     <div class="flex items-center gap-3">
                         {% block page_actions %}{% endblock %}
@@ -250,7 +249,7 @@
             </header>
 
             <!-- Page content -->
-            <div class="p-8">
+            <div class="p-8 animate-in">
                 {% block content %}{% endblock %}
             </div>
         </main>

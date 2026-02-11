@@ -3,65 +3,106 @@
 {% block page_title %}{{ vehicle.plate_number }}{% endblock %}
 {% block page_subtitle %}{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year or '—' }}){% endblock %}
 {% block page_actions %}
-<a href="/vehicles/{{ vehicle.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
+<a href="/vehicles/{{ vehicle.id }}/edit" class="btn-secondary btn-sm flex items-center gap-1.5">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+    Düzenle
+</a>
 <a href="/work-orders/create?vehicle_id={{ vehicle.id }}&customer_id={{ vehicle.customer_id }}"
-    class="btn-primary btn-sm">+ İş Emri</a>
+    class="btn-gradient-primary btn-sm flex items-center gap-1.5">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    İş Emri
+</a>
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Araç Bilgileri</h4>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 stagger-children">
+    <div class="detail-card accent-blue p-6">
+        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Araç Bilgileri</h4>
         <div class="space-y-3 text-sm">
-            <div><span class="text-gray-500">Plaka:</span> <span class="font-bold text-lg">{{ vehicle.plate_number
-                    }}</span></div>
-            <div><span class="text-gray-500">Marka / Model:</span> {{ vehicle.brand }} {{ vehicle.model }}</div>
-            <div><span class="text-gray-500">Yıl:</span> {{ vehicle.year or '—' }}</div>
-            <div><span class="text-gray-500">Yakıt:</span> {{ vehicle.fuel_type.value|capitalize if vehicle.fuel_type
-                else '—' }}</div>
-            <div><span class="text-gray-500">Vites:</span> {{ vehicle.transmission_type.value|capitalize if
-                vehicle.transmission_type else '—' }}</div>
-            <div><span class="text-gray-500">KM:</span> {{ vehicle.current_km or '—' }}</div>
-            <div><span class="text-gray-500">Şasi No:</span> {{ vehicle.chassis_number or '—' }}</div>
-            <div><span class="text-gray-500">Motor No:</span> {{ vehicle.engine_number or '—' }}</div>
+            <div><span class="text-gray-400 text-xs">Plaka</span>
+                <p class="font-bold text-lg text-gray-800">{{ vehicle.plate_number }}</p>
+            </div>
+            <div><span class="text-gray-400 text-xs">Marka / Model</span>
+                <p class="font-medium text-gray-600">{{ vehicle.brand }} {{ vehicle.model }}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><span class="text-gray-400 text-xs">Yıl</span>
+                    <p class="font-medium text-gray-600">{{ vehicle.year or '—' }}</p>
+                </div>
+                <div><span class="text-gray-400 text-xs">KM</span>
+                    <p class="font-medium text-gray-600">{{ vehicle.current_km or '—' }}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><span class="text-gray-400 text-xs">Yakıt</span>
+                    <p class="font-medium text-gray-600">{{ vehicle.fuel_type.value|capitalize if vehicle.fuel_type else
+                        '—' }}</p>
+                </div>
+                <div><span class="text-gray-400 text-xs">Vites</span>
+                    <p class="font-medium text-gray-600">{{ vehicle.transmission_type.value|capitalize if
+                        vehicle.transmission_type else '—' }}</p>
+                </div>
+            </div>
+            <div><span class="text-gray-400 text-xs">Şasi No</span>
+                <p class="font-medium text-gray-600">{{ vehicle.chassis_number or '—' }}</p>
+            </div>
+            <div><span class="text-gray-400 text-xs">Motor No</span>
+                <p class="font-medium text-gray-600">{{ vehicle.engine_number or '—' }}</p>
+            </div>
         </div>
     </div>
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Müşteri</h4>
+    <div class="detail-card accent-purple p-6">
+        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Müşteri</h4>
         <div class="space-y-3 text-sm">
-            <div><span class="text-gray-500">Ad Soyad:</span> <a href="/customers/{{ vehicle.customer.id }}"
-                    class="text-primary-600 font-semibold hover:underline">{{ vehicle.customer.full_name }}</a></div>
-            <div><span class="text-gray-500">Telefon:</span> {{ vehicle.customer.phone }}</div>
+            <div><span class="text-gray-400 text-xs">Ad Soyad</span>
+                <p><a href="/customers/{{ vehicle.customer.id }}"
+                        class="text-primary-600 font-semibold hover:underline">{{ vehicle.customer.full_name }}</a></p>
+            </div>
+            <div><span class="text-gray-400 text-xs">Telefon</span>
+                <p class="font-medium text-gray-600">{{ vehicle.customer.phone }}</p>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-lg font-bold text-gray-800">İş Emirleri</h3>
+<div class="table-premium animate-in">
+    <div class="section-header">
+        <h3>İş Emirleri</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Durum</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tarih</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Durum</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tarih</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for wo in work_orders %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/work-orders/{{ wo.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ wo.work_order_number }}</a></td>
-                <td class="px-6 py-3"><span class="badge bg-gray-100 text-gray-700">{{ wo.status.value }}</span></td>
-                <td class="px-6 py-3 text-sm text-gray-600">{{ wo.created_at.strftime('%d.%m.%Y') if wo.created_at else
+                <td class="px-6 py-3"><span class="badge-premium bg-gray-100 text-gray-600">{{ wo.status.value }}</span>
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ wo.created_at.strftime('%d.%m.%Y') if wo.created_at else
                     '—' }}</td>
-                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(wo.grand_total) }}</td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800">₺{{ "{:,.2f}".format(wo.grand_total) }}
+                </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" class="px-6 py-6 text-center text-gray-400">İş emri bulunamadı.</td>
+                <td colspan="4" class="px-6 py-8">
+                    <div class="empty-state">
+                        <p class="text-sm">İş emri bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

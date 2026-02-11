@@ -2,16 +2,19 @@
 {% block title %}İş Emirleri — OtoServis Pro{% endblock %}
 {% block page_title %}İş Emirleri{% endblock %}
 {% block page_subtitle %}Toplam {{ total }} iş emri{% endblock %}
-{% block page_actions %}<a href="/work-orders/create" class="btn-primary">+ Yeni İş Emri</a>{% endblock %}
+{% block page_actions %}<a href="/work-orders/create" class="btn-gradient-primary flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Yeni İş Emri
+</a>{% endblock %}
 
 {% block content %}
 <!-- Status Filter -->
-<div class="mb-6 flex flex-wrap gap-2">
-    <a href="/work-orders"
-        class="btn-sm {% if not current_status %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">Tümü</a>
+<div class="mb-6 flex flex-wrap gap-2 animate-in">
+    <a href="/work-orders" class="filter-pill {% if not current_status %}active{% endif %}">Tümü</a>
     {% for s in statuses %}
-    <a href="/work-orders?status={{ s.value }}"
-        class="btn-sm {% if current_status == s.value %}btn-primary{% else %}btn-secondary{% endif %} rounded-full">
+    <a href="/work-orders?status={{ s.value }}" class="filter-pill {% if current_status == s.value %}active{% endif %}">
         {% if s.value == 'pending' %}Bekliyor{% elif s.value == 'approved' %}Onaylandı{% elif s.value == 'in_progress'
         %}Devam Ediyor{% elif s.value == 'completed' %}Tamamlandı{% elif s.value == 'delivered' %}Teslim Edildi{% else
         %}İptal{% endif %}
@@ -19,49 +22,62 @@
     {% endfor %}
 </div>
 
-<div class="table-container">
+<div class="table-premium animate-in-delayed">
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Araç</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Durum</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tarih</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Araç</th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Durum
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tarih
+                </th>
+                <th class="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar
+                </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for wo in work_orders %}
-            <tr class="hover:bg-gray-50 transition-colors">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200 group"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-4"><a href="/work-orders/{{ wo.id }}"
                         class="text-primary-600 font-bold hover:underline">{{ wo.work_order_number }}</a></td>
                 <td class="px-6 py-4 text-sm">
-                    <span class="font-semibold">{{ wo.vehicle.plate_number }}</span>
+                    <span class="font-semibold text-gray-700">{{ wo.vehicle.plate_number }}</span>
                     <span class="text-gray-400 ml-1">{{ wo.vehicle.brand }} {{ wo.vehicle.model }}</span>
                 </td>
                 <td class="px-6 py-4 text-sm"><a href="/customers/{{ wo.customer.id }}"
                         class="text-primary-600 hover:underline">{{ wo.customer.full_name }}</a></td>
                 <td class="px-6 py-4">
-                    <span class="badge
-                        {% if wo.status.value == 'pending' %}bg-yellow-100 text-yellow-700
-                        {% elif wo.status.value == 'approved' %}bg-blue-100 text-blue-700
-                        {% elif wo.status.value == 'in_progress' %}bg-purple-100 text-purple-700
-                        {% elif wo.status.value == 'completed' %}bg-emerald-100 text-emerald-700
-                        {% elif wo.status.value == 'delivered' %}bg-gray-200 text-gray-700
-                        {% else %}bg-red-100 text-red-700{% endif %}">
+                    <span class="badge-premium
+                        {% if wo.status.value == 'pending' %}bg-amber-50 text-amber-700
+                        {% elif wo.status.value == 'approved' %}bg-blue-50 text-blue-700
+                        {% elif wo.status.value == 'in_progress' %}bg-violet-50 text-violet-700
+                        {% elif wo.status.value == 'completed' %}bg-emerald-50 text-emerald-700
+                        {% elif wo.status.value == 'delivered' %}bg-gray-100 text-gray-600
+                        {% else %}bg-red-50 text-red-700{% endif %}">
                         {% if wo.status.value == 'pending' %}Bekliyor{% elif wo.status.value == 'approved' %}Onaylandı{%
                         elif wo.status.value == 'in_progress' %}Devam Ediyor{% elif wo.status.value == 'completed'
                         %}Tamamlandı{% elif wo.status.value == 'delivered' %}Teslim Edildi{% else %}İptal{% endif %}
                     </span>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-500">{{ wo.created_at.strftime('%d.%m.%Y') if wo.created_at else
+                <td class="px-6 py-4 text-sm text-gray-400">{{ wo.created_at.strftime('%d.%m.%Y') if wo.created_at else
                     '—' }}</td>
                 <td class="px-6 py-4 text-right font-bold text-gray-800">₺{{ "{:,.2f}".format(wo.grand_total) }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-400">İş emri bulunamadı.</td>
+                <td colspan="6" class="px-6 py-12">
+                    <div class="empty-state">
+                        <svg class="text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <p class="text-sm">İş emri bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -71,11 +87,11 @@
 {% if total_pages > 1 %}
 <div class="flex items-center justify-center gap-2 mt-6">
     {% if page > 1 %}<a href="?page={{ page-1 }}{% if current_status %}&status={{ current_status }}{% endif %}"
-        class="btn-secondary btn-sm">← Önceki</a>{% endif %}
-    <span class="text-sm text-gray-500">Sayfa {{ page }} / {{ total_pages }}</span>
+        class="pagination-pill">← Önceki</a>{% endif %}
+    <span class="pagination-pill active">{{ page }} / {{ total_pages }}</span>
     {% if page < total_pages %}<a
-        href="?page={{ page+1 }}{% if current_status %}&status={{ current_status }}{% endif %}"
-        class="btn-secondary btn-sm">Sonraki →</a>{% endif %}
+        href="?page={{ page+1 }}{% if current_status %}&status={{ current_status }}{% endif %}" class="pagination-pill">
+        Sonraki →</a>{% endif %}
 </div>
 {% endif %}
 {% endblock %}

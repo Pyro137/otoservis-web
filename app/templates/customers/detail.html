@@ -4,71 +4,138 @@
 {% block page_subtitle %}{% if customer.type.value == 'corporate' %}Kurumsal{% else %}Bireysel{% endif %} Müşteri{%
 endblock %}
 {% block page_actions %}
-<a href="/customers/{{ customer.id }}/edit" class="btn-secondary btn-sm">✏️ Düzenle</a>
-<a href="/vehicles/create?customer_id={{ customer.id }}" class="btn-primary btn-sm">+ Araç Ekle</a>
-<a href="/work-orders/create?customer_id={{ customer.id }}" class="btn-success btn-sm">+ İş Emri</a>
+<a href="/customers/{{ customer.id }}/edit" class="btn-secondary btn-sm flex items-center gap-1.5">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+    Düzenle
+</a>
+<a href="/vehicles/create?customer_id={{ customer.id }}" class="btn-primary btn-sm flex items-center gap-1.5">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Araç Ekle
+</a>
+<a href="/work-orders/create?customer_id={{ customer.id }}" class="btn-success btn-sm flex items-center gap-1.5">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    İş Emri
+</a>
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">İletişim Bilgileri</h4>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 stagger-children">
+    <div class="detail-card accent-blue p-6">
+        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">İletişim Bilgileri</h4>
         <div class="space-y-3 text-sm">
-            <div><span class="text-gray-500">Telefon:</span> <span class="font-semibold">{{ customer.phone }}</span>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                </div>
+                <div><span class="text-gray-400 text-xs">Telefon</span>
+                    <p class="font-semibold text-gray-700">{{ customer.phone }}</p>
+                </div>
             </div>
-            <div><span class="text-gray-500">E-posta:</span> {{ customer.email or '—' }}</div>
-            <div><span class="text-gray-500">Adres:</span> {{ customer.address or '—' }}</div>
-            <div><span class="text-gray-500">Şehir:</span> {{ customer.city or '—' }}</div>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div><span class="text-gray-400 text-xs">E-posta</span>
+                    <p class="font-medium text-gray-600">{{ customer.email or '—' }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div><span class="text-gray-400 text-xs">Adres / Şehir</span>
+                    <p class="font-medium text-gray-600">{{ customer.address or '—' }} {{ '/ ' + customer.city if
+                        customer.city else '' }}</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Vergi Bilgileri</h4>
+    <div class="detail-card accent-purple p-6">
+        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Vergi Bilgileri</h4>
         <div class="space-y-3 text-sm">
-            <div><span class="text-gray-500">Firma:</span> {{ customer.company_name or '—' }}</div>
-            <div><span class="text-gray-500">Vergi No:</span> {{ customer.tax_number or '—' }}</div>
-            <div><span class="text-gray-500">Vergi Dairesi:</span> {{ customer.tax_office or '—' }}</div>
+            <div><span class="text-gray-400 text-xs">Firma</span>
+                <p class="font-medium text-gray-600">{{ customer.company_name or '—' }}</p>
+            </div>
+            <div><span class="text-gray-400 text-xs">Vergi No</span>
+                <p class="font-medium text-gray-600">{{ customer.tax_number or '—' }}</p>
+            </div>
+            <div><span class="text-gray-400 text-xs">Vergi Dairesi</span>
+                <p class="font-medium text-gray-600">{{ customer.tax_office or '—' }}</p>
+            </div>
         </div>
     </div>
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4">Özet</h4>
-        <div class="space-y-3 text-sm">
-            <div><span class="text-gray-500">Araç Sayısı:</span> <span class="font-semibold">{{ vehicles|length
-                    }}</span></div>
-            <div><span class="text-gray-500">İş Emri Sayısı:</span> <span class="font-semibold">{{ work_orders|length
-                    }}</span></div>
-            <div><span class="text-gray-500">Bakiye:</span> <span
-                    class="font-semibold {% if customer.total_debt > 0 %}text-red-600{% endif %}">₺{{
-                    "{:,.2f}".format(customer.total_debt) }}</span></div>
+    <div class="detail-card accent-green p-6">
+        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Özet</h4>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400 text-sm">Araç Sayısı</span>
+                <span class="text-2xl font-bold text-gray-800">{{ vehicles|length }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400 text-sm">İş Emri Sayısı</span>
+                <span class="text-2xl font-bold text-gray-800">{{ work_orders|length }}</span>
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                <span class="text-gray-400 text-sm">Bakiye</span>
+                <span
+                    class="text-2xl font-bold {% if customer.total_debt > 0 %}text-red-600{% else %}text-emerald-600{% endif %}">
+                    ₺{{ "{:,.2f}".format(customer.total_debt) }}
+                </span>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Vehicles -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-lg font-bold text-gray-800">Araçlar</h3>
+<div class="table-premium mb-6 animate-in">
+    <div class="section-header">
+        <h3>Araçlar</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Plaka</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Marka / Model</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Yıl</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">KM</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plaka</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Marka /
+                    Model</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Yıl</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">KM</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for v in vehicles %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/vehicles/{{ v.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ v.plate_number }}</a></td>
-                <td class="px-6 py-3 text-sm">{{ v.brand }} {{ v.model }}</td>
-                <td class="px-6 py-3 text-sm">{{ v.year or '—' }}</td>
-                <td class="px-6 py-3 text-sm">{{ v.current_km or '—' }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ v.brand }} {{ v.model }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ v.year or '—' }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ v.current_km or '—' }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" class="px-6 py-6 text-center text-gray-400">Araç bulunamadı.</td>
+                <td colspan="4" class="px-6 py-8">
+                    <div class="empty-state">
+                        <p class="text-sm">Araç bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -76,33 +143,39 @@ endblock %}
 </div>
 
 <!-- Work Orders -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-lg font-bold text-gray-800">İş Emirleri</h3>
+<div class="table-premium animate-in">
+    <div class="section-header">
+        <h3>İş Emirleri</h3>
     </div>
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Araç</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Durum</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tutar</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Araç</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Durum</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for wo in work_orders %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-3"><a href="/work-orders/{{ wo.id }}"
                         class="text-primary-600 font-semibold hover:underline">{{ wo.work_order_number }}</a></td>
-                <td class="px-6 py-3 text-sm">{{ wo.vehicle.plate_number }}</td>
+                <td class="px-6 py-3 text-sm text-gray-500">{{ wo.vehicle.plate_number }}</td>
                 <td class="px-6 py-3"><span
-                        class="badge {% if wo.status.value == 'completed' %}bg-emerald-100 text-emerald-700{% elif wo.status.value == 'in_progress' %}bg-purple-100 text-purple-700{% elif wo.status.value == 'pending' %}bg-yellow-100 text-yellow-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{
+                        class="badge-premium {% if wo.status.value == 'completed' %}bg-emerald-50 text-emerald-700{% elif wo.status.value == 'in_progress' %}bg-violet-50 text-violet-700{% elif wo.status.value == 'pending' %}bg-amber-50 text-amber-700{% else %}bg-gray-100 text-gray-600{% endif %}">{{
                         wo.status.value }}</span></td>
-                <td class="px-6 py-3 text-right font-semibold">₺{{ "{:,.2f}".format(wo.grand_total) }}</td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800">₺{{ "{:,.2f}".format(wo.grand_total) }}
+                </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" class="px-6 py-6 text-center text-gray-400">İş emri bulunamadı.</td>
+                <td colspan="4" class="px-6 py-8">
+                    <div class="empty-state">
+                        <p class="text-sm">İş emri bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

@@ -4,31 +4,38 @@
 {% block page_subtitle %}Veritabanı yedekleme ve geri yükleme{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl">
+<div class="max-w-3xl stagger-children">
     <!-- Create Backup -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+    <div class="detail-card accent-blue p-6 mb-6">
         <div class="flex items-center justify-between">
             <div>
                 <h3 class="text-lg font-bold text-gray-800">Yeni Yedek Oluştur</h3>
-                <p class="text-sm text-gray-500 mt-1">Veritabanının anlık yedeğini alır.</p>
+                <p class="text-sm text-gray-400 mt-1">Veritabanının anlık yedeğini alır.</p>
             </div>
             <form method="POST" action="/backup/create">
-                <button type="submit" class="btn-primary">💾 Yedek Al</button>
+                <button type="submit" class="btn-gradient-primary flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                    </svg>
+                    Yedek Al
+                </button>
             </form>
         </div>
     </div>
 
     <!-- Backup List -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-bold text-gray-800">Mevcut Yedekler</h3>
+    <div class="table-premium">
+        <div class="section-header">
+            <h3>Mevcut Yedekler</h3>
         </div>
         <div class="divide-y divide-gray-50">
             {% for b in backups %}
-            <div class="flex items-center justify-between px-6 py-4">
+            <div
+                class="flex items-center justify-between px-6 py-4 hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200">
                 <div>
                     <p class="font-semibold text-sm text-gray-800">{{ b.filename }}</p>
-                    <p class="text-xs text-gray-500">{{ b.created }} — {{ b.size_mb }} MB</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ b.created }} — {{ b.size_mb }} MB</p>
                 </div>
                 <form method="POST" action="/backup/restore/{{ b.filename }}"
                     onsubmit="return confirm('Bu yedeği geri yüklemek istediğinizden emin misiniz? Mevcut veriler yedeklenip üzerine yazılacaktır.')">
@@ -36,7 +43,13 @@
                 </form>
             </div>
             {% else %}
-            <div class="px-6 py-8 text-center text-gray-400">Henüz yedek bulunmuyor.</div>
+            <div class="empty-state">
+                <svg class="text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+                <p class="text-sm">Henüz yedek bulunmuyor.</p>
+            </div>
             {% endfor %}
         </div>
     </div>

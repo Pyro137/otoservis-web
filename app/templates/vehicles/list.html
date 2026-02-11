@@ -2,51 +2,73 @@
 {% block title %}Araçlar — OtoServis Pro{% endblock %}
 {% block page_title %}Araçlar{% endblock %}
 {% block page_subtitle %}Toplam {{ total }} araç{% endblock %}
-{% block page_actions %}<a href="/vehicles/create" class="btn-primary">+ Yeni Araç</a>{% endblock %}
+{% block page_actions %}<a href="/vehicles/create" class="btn-gradient-primary flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Yeni Araç
+</a>{% endblock %}
 
 {% block content %}
-<div class="mb-6">
+<div class="mb-6 animate-in">
     <form method="GET" class="flex gap-3">
         <input type="text" name="q" value="{{ q }}" placeholder="Plaka, marka veya model ile ara..."
-            class="input-field max-w-md">
-        <button type="submit" class="btn-primary">Ara</button>
+            class="search-premium max-w-md flex-1 text-sm outline-none">
+        <button type="submit" class="btn-gradient-primary">Ara</button>
         {% if q %}<a href="/vehicles" class="btn-secondary">Temizle</a>{% endif %}
     </form>
 </div>
 
-<div class="table-container">
+<div class="table-premium animate-in-delayed">
     <table class="w-full">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Plaka</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Marka / Model</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Yıl</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Müşteri</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">KM</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">İşlem</th>
+        <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-slate-50">
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plaka
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Marka /
+                    Model</th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Yıl</th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri
+                </th>
+                <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">KM</th>
+                <th class="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">İşlem
+                </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
             {% for v in vehicles %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-transparent transition-all duration-200"
+                style="border-left: 3px solid transparent;">
                 <td class="px-6 py-4"><a href="/vehicles/{{ v.id }}"
                         class="text-primary-600 font-bold hover:underline">{{ v.plate_number }}</a></td>
-                <td class="px-6 py-4 text-sm">{{ v.brand }} {{ v.model }}</td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ v.year or '—' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ v.brand }} {{ v.model }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ v.year or '—' }}</td>
                 <td class="px-6 py-4 text-sm"><a href="/customers/{{ v.customer.id }}"
                         class="text-primary-600 hover:underline">{{ v.customer.full_name }}</a></td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ v.current_km or '—' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ v.current_km or '—' }}</td>
                 <td class="px-6 py-4 text-right">
-                    <a href="/vehicles/{{ v.id }}/edit" class="text-gray-400 hover:text-primary-600"><svg
-                            class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="/vehicles/{{ v.id }}/edit"
+                        class="text-gray-300 hover:text-primary-600 transition-colors p-1.5 rounded-lg hover:bg-blue-50 inline-flex">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg></a>
+                        </svg>
+                    </a>
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-400">Araç bulunamadı.</td>
+                <td colspan="6" class="px-6 py-12">
+                    <div class="empty-state">
+                        <svg class="text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m4 0h1a1 1 0 001-1v-4.586a1 1 0 00-.293-.707l-3.414-3.414A1 1 0 0016.586 6H14v10" />
+                        </svg>
+                        <p class="text-sm">Araç bulunamadı.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -55,10 +77,10 @@
 
 {% if total_pages > 1 %}
 <div class="flex items-center justify-center gap-2 mt-6">
-    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">←
-        Önceki</a>{% endif %}
-    <span class="text-sm text-gray-500">Sayfa {{ page }} / {{ total_pages }}</span>
-    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="btn-secondary btn-sm">
+    {% if page > 1 %}<a href="?page={{ page-1 }}{% if q %}&q={{ q }}{% endif %}" class="pagination-pill">← Önceki</a>{%
+    endif %}
+    <span class="pagination-pill active">{{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="?page={{ page+1 }}{% if q %}&q={{ q }}{% endif %}" class="pagination-pill">
         Sonraki →</a>{% endif %}
 </div>
 {% endif %}

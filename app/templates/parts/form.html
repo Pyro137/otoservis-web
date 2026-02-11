@@ -3,8 +3,8 @@
 {% block page_title %}{% if part %}Parça Düzenle{% else %}Yeni Parça{% endif %}{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+<div class="max-w-3xl animate-in">
+    <div class="form-card-premium p-8">
         <form method="POST" action="{% if part %}/parts/{{ part.id }}/edit{% else %}/parts/create{% endif %}"
             class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -47,8 +47,13 @@
                         min="0" class="input-field">
                 </div>
             </div>
-            <div class="flex items-center gap-3 pt-4">
-                <button type="submit" class="btn-primary">💾 Kaydet</button>
+            <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+                <button type="submit" class="btn-gradient-primary flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Kaydet
+                </button>
                 <a href="/parts" class="btn-secondary">İptal</a>
             </div>
         </form>
