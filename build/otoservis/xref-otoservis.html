@@ -6638,6 +6638,7 @@ imported by:
     <a href="#app.core.database">app.core.database</a>
  &#8226;   <a href="#app.core.security">app.core.security</a>
  &#8226;   <a href="#app.main">app.main</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.services.work_order_service">app.services.work_order_service</a>
  &#8226;   <a href="#app.utils.backup_service">app.utils.backup_service</a>
  &#8226;   <a href="#launcher.py">launcher.py</a>
@@ -6663,6 +6664,7 @@ imports:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#sqlalchemy">sqlalchemy</a>
  &#8226;   <a href="#sqlalchemy.event">sqlalchemy.event</a>
  &#8226;   <a href="#sqlalchemy.orm">sqlalchemy.orm</a>
@@ -6681,6 +6683,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#app.repositories.base">app.repositories.base</a>
  &#8226;   <a href="#app.routers.auth">app.routers.auth</a>
  &#8226;   <a href="#app.routers.backup">app.routers.backup</a>
@@ -6750,6 +6753,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#app.repositories.audit_log_repo">app.repositories.audit_log_repo</a>
  &#8226;   <a href="#app.repositories.work_order_repo">app.repositories.work_order_repo</a>
  &#8226;   <a href="#app.routers.customers">app.routers.customers</a>
@@ -6845,6 +6849,7 @@ imports:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
 
   </div>
   <div class="import">
@@ -6860,6 +6865,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#launcher.py">launcher.py</a>
 
   </div>
@@ -6906,6 +6912,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#launcher.py">launcher.py</a>
 
   </div>
@@ -7117,6 +7124,30 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="app.models.work_order_photo"></a>
+  <a target="code" href="/home/pyro/Desktop/projects/otoservis_web/app/models/work_order_photo.py" type="text/plain"><tt>app.models.work_order_photo</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#app.core.database">app.core.database</a>
+ &#8226;   <a href="#app.core.enums">app.core.enums</a>
+ &#8226;   <a href="#app.models">app.models</a>
+ &#8226;   <a href="#app.models.base">app.models.base</a>
+ &#8226;   <a href="#sqlalchemy">sqlalchemy</a>
+ &#8226;   <a href="#sqlalchemy.orm">sqlalchemy.orm</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#app.core.database">app.core.database</a>
+ &#8226;   <a href="#app.models">app.models</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="app.repositories"></a>
   <a target="code" href="/home/pyro/Desktop/projects/otoservis_web/app/repositories/__init__.py" type="text/plain"><tt>app.repositories</tt></a>
 <span class="moduletype">Package</span>  <div class="import">
@@ -7135,6 +7166,7 @@ imported by:
  &#8226;   <a href="#app.repositories.user_repo">app.repositories.user_repo</a>
  &#8226;   <a href="#app.repositories.vehicle_repo">app.repositories.vehicle_repo</a>
  &#8226;   <a href="#app.repositories.work_order_item_repo">app.repositories.work_order_item_repo</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
  &#8226;   <a href="#app.repositories.work_order_repo">app.repositories.work_order_repo</a>
  &#8226;   <a href="#launcher.py">launcher.py</a>
 
@@ -7187,6 +7219,7 @@ imported by:
  &#8226;   <a href="#app.repositories.user_repo">app.repositories.user_repo</a>
  &#8226;   <a href="#app.repositories.vehicle_repo">app.repositories.vehicle_repo</a>
  &#8226;   <a href="#app.repositories.work_order_item_repo">app.repositories.work_order_item_repo</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
  &#8226;   <a href="#app.repositories.work_order_repo">app.repositories.work_order_repo</a>
 
   </div>
@@ -7333,6 +7366,26 @@ imports:
   <div class="import">
 imported by:
     <a href="#app.services.work_order_service">app.services.work_order_service</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="app.repositories.work_order_photo_repo"></a>
+  <a target="code" href="/home/pyro/Desktop/projects/otoservis_web/app/repositories/work_order_photo_repo.py" type="text/plain"><tt>app.repositories.work_order_photo_repo</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
+ &#8226;   <a href="#app.repositories">app.repositories</a>
+ &#8226;   <a href="#app.repositories.base">app.repositories.base</a>
+ &#8226;   <a href="#sqlalchemy.orm">sqlalchemy.orm</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#app.services.photo_service">app.services.photo_service</a>
 
   </div>
 
@@ -7614,6 +7667,7 @@ imports:
  &#8226;   <a href="#app.services.invoice_service">app.services.invoice_service</a>
  &#8226;   <a href="#app.services.part_service">app.services.part_service</a>
  &#8226;   <a href="#app.services.payment_service">app.services.payment_service</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.services.vehicle_service">app.services.vehicle_service</a>
  &#8226;   <a href="#app.services.work_order_service">app.services.work_order_service</a>
  &#8226;   <a href="#fastapi">fastapi</a>
@@ -7645,6 +7699,7 @@ imported by:
  &#8226;   <a href="#app.services.invoice_service">app.services.invoice_service</a>
  &#8226;   <a href="#app.services.part_service">app.services.part_service</a>
  &#8226;   <a href="#app.services.payment_service">app.services.payment_service</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.services.vehicle_service">app.services.vehicle_service</a>
  &#8226;   <a href="#app.services.work_order_service">app.services.work_order_service</a>
  &#8226;   <a href="#launcher.py">launcher.py</a>
@@ -7770,6 +7825,32 @@ imported by:
     <a href="#app.routers.dashboard">app.routers.dashboard</a>
  &#8226;   <a href="#app.routers.payments">app.routers.payments</a>
  &#8226;   <a href="#app.routers.work_orders">app.routers.work_orders</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="app.services.photo_service"></a>
+  <a target="code" href="/home/pyro/Desktop/projects/otoservis_web/app/services/photo_service.py" type="text/plain"><tt>app.services.photo_service</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#app.core.config">app.core.config</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
+ &#8226;   <a href="#app.services">app.services</a>
+ &#8226;   <a href="#fastapi">fastapi</a>
+ &#8226;   <a href="#logging">logging</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pathlib">pathlib</a>
+ &#8226;   <a href="#sqlalchemy.orm">sqlalchemy.orm</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#uuid">uuid</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#app.routers.work_orders">app.routers.work_orders</a>
 
   </div>
 
@@ -15694,6 +15775,7 @@ imported by:
  &#8226;   <a href="#app.routers.reports">app.routers.reports</a>
  &#8226;   <a href="#app.routers.vehicles">app.routers.vehicles</a>
  &#8226;   <a href="#app.routers.work_orders">app.routers.work_orders</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#fastapi._compat">fastapi._compat</a>
  &#8226;   <a href="#fastapi.applications">fastapi.applications</a>
  &#8226;   <a href="#fastapi.background">fastapi.background</a>
@@ -18014,7 +18096,6 @@ imports:
  &#8226;   <a href="#importlib">importlib</a>
  &#8226;   <a href="#importlib._bootstrap">importlib._bootstrap</a>
  &#8226;   <a href="#importlib._bootstrap_external">importlib._bootstrap_external</a>
- &#8226;   <a href="#importlib.machinery">importlib.machinery</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#warnings">warnings</a>
 
@@ -18168,8 +18249,7 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#importlib">importlib</a>
- &#8226;   <a href="#importlib.abc">importlib.abc</a>
+    <a href="#importlib.abc">importlib.abc</a>
  &#8226;   <a href="#inspect">inspect</a>
  &#8226;   <a href="#packaging.tags">packaging.tags</a>
  &#8226;   <a href="#pkgutil">pkgutil</a>
@@ -20195,6 +20275,7 @@ imported by:
  &#8226;   <a href="#anyio.streams.tls">anyio.streams.tls</a>
  &#8226;   <a href="#app.core.config">app.core.config</a>
  &#8226;   <a href="#app.main">app.main</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#asyncio.futures">asyncio.futures</a>
  &#8226;   <a href="#asyncio.log">asyncio.log</a>
  &#8226;   <a href="#chardet.charsetprober">chardet.charsetprober</a>
@@ -22339,6 +22420,7 @@ imported by:
  &#8226;   <a href="#anyio._core._tempfile">anyio._core._tempfile</a>
  &#8226;   <a href="#anyio.abc._eventloop">anyio.abc._eventloop</a>
  &#8226;   <a href="#app.core.config">app.core.config</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.utils.backup_service">app.utils.backup_service</a>
  &#8226;   <a href="#app.utils.pdf_generator">app.utils.pdf_generator</a>
  &#8226;   <a href="#argparse">argparse</a>
@@ -23042,6 +23124,7 @@ imports:
 imported by:
     <a href="#anyio._core._fileio">anyio._core._fileio</a>
  &#8226;   <a href="#app.core.config">app.core.config</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.utils.backup_service">app.utils.backup_service</a>
  &#8226;   <a href="#click._termui_impl">click._termui_impl</a>
  &#8226;   <a href="#dotenv.main">dotenv.main</a>
@@ -34726,6 +34809,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#app.repositories.customer_repo">app.repositories.customer_repo</a>
  &#8226;   <a href="#app.repositories.part_repo">app.repositories.part_repo</a>
  &#8226;   <a href="#app.repositories.payment_repo">app.repositories.payment_repo</a>
@@ -38237,6 +38321,7 @@ imported by:
  &#8226;   <a href="#app.models.vehicle">app.models.vehicle</a>
  &#8226;   <a href="#app.models.work_order">app.models.work_order</a>
  &#8226;   <a href="#app.models.work_order_item">app.models.work_order_item</a>
+ &#8226;   <a href="#app.models.work_order_photo">app.models.work_order_photo</a>
  &#8226;   <a href="#app.repositories.audit_log_repo">app.repositories.audit_log_repo</a>
  &#8226;   <a href="#app.repositories.base">app.repositories.base</a>
  &#8226;   <a href="#app.repositories.customer_repo">app.repositories.customer_repo</a>
@@ -38246,6 +38331,7 @@ imported by:
  &#8226;   <a href="#app.repositories.user_repo">app.repositories.user_repo</a>
  &#8226;   <a href="#app.repositories.vehicle_repo">app.repositories.vehicle_repo</a>
  &#8226;   <a href="#app.repositories.work_order_item_repo">app.repositories.work_order_item_repo</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
  &#8226;   <a href="#app.repositories.work_order_repo">app.repositories.work_order_repo</a>
  &#8226;   <a href="#app.routers.auth">app.routers.auth</a>
  &#8226;   <a href="#app.routers.backup">app.routers.backup</a>
@@ -38261,6 +38347,7 @@ imported by:
  &#8226;   <a href="#app.services.invoice_service">app.services.invoice_service</a>
  &#8226;   <a href="#app.services.part_service">app.services.part_service</a>
  &#8226;   <a href="#app.services.payment_service">app.services.payment_service</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.services.vehicle_service">app.services.vehicle_service</a>
  &#8226;   <a href="#app.services.work_order_service">app.services.work_order_service</a>
  &#8226;   <a href="#sqlalchemy">sqlalchemy</a>
@@ -45100,12 +45187,14 @@ imported by:
  &#8226;   <a href="#app.repositories.user_repo">app.repositories.user_repo</a>
  &#8226;   <a href="#app.repositories.vehicle_repo">app.repositories.vehicle_repo</a>
  &#8226;   <a href="#app.repositories.work_order_item_repo">app.repositories.work_order_item_repo</a>
+ &#8226;   <a href="#app.repositories.work_order_photo_repo">app.repositories.work_order_photo_repo</a>
  &#8226;   <a href="#app.repositories.work_order_repo">app.repositories.work_order_repo</a>
  &#8226;   <a href="#app.services.auth_service">app.services.auth_service</a>
  &#8226;   <a href="#app.services.customer_service">app.services.customer_service</a>
  &#8226;   <a href="#app.services.invoice_service">app.services.invoice_service</a>
  &#8226;   <a href="#app.services.part_service">app.services.part_service</a>
  &#8226;   <a href="#app.services.payment_service">app.services.payment_service</a>
+ &#8226;   <a href="#app.services.photo_service">app.services.photo_service</a>
  &#8226;   <a href="#app.services.vehicle_service">app.services.vehicle_service</a>
  &#8226;   <a href="#app.services.work_order_service">app.services.work_order_service</a>
  &#8226;   <a href="#asyncio.staggered">asyncio.staggered</a>
@@ -46375,7 +46464,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#click.types">click.types</a>
+    <a href="#app.services.photo_service">app.services.photo_service</a>
+ &#8226;   <a href="#click.types">click.types</a>
  &#8226;   <a href="#fastapi.encoders">fastapi.encoders</a>
  &#8226;   <a href="#pydantic._internal._generate_schema">pydantic._internal._generate_schema</a>
  &#8226;   <a href="#pydantic.deprecated.json">pydantic.deprecated.json</a>

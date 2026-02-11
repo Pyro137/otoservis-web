@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, UploadFile, File
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
 
@@ -29,6 +29,20 @@ async def create_backup(
     try:
         path = BackupService.create_backup()
         BackupService.cleanup_old_backups()
+    except Exception as e:
+        pass
+    return RedirectResponse("/backup", status_code=303)
+
+
+@router.post("/upload")
+async def upload_backup(
+    request: Request,
+    backup_file: UploadFile = File(...),
+    user=Depends(require_admin),
+):
+    try:
+        content = await backup_file.read()
+        BackupService.import_backup(content, backup_file.filename)
     except Exception as e:
         pass
     return RedirectResponse("/backup", status_code=303)

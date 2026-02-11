@@ -58,6 +58,6 @@ SORUN GİDERME
 
 DESTEK
 ======
-Sorunlar için proje geliştiricisi ile iletişime geçin.
+Sorunlar için proje geliştiricisi ile Metin Işıkcan ile iletişime geçin 0545 468 58 37.
 
 =============================================

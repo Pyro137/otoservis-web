@@ -50,6 +50,25 @@ class BackupService:
         return True
 
     @staticmethod
+    def import_backup(file_content: bytes, original_filename: str) -> str:
+        """Import an external backup file into the backup directory."""
+        if not original_filename.lower().endswith(".db"):
+            raise ValueError("Sadece .db uzantılı dosyalar kabul edilir.")
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = "".join(
+            c if c.isalnum() or c in ("_", "-", ".") else "_"
+            for c in original_filename
+        )
+        import_filename = f"imported_{timestamp}_{safe_name}"
+        import_path = settings.BACKUP_DIR / import_filename
+
+        with open(import_path, "wb") as f:
+            f.write(file_content)
+
+        return str(import_path)
+
+    @staticmethod
     def cleanup_old_backups():
         """Remove oldest backups if exceeding MAX_BACKUP_COUNT."""
         if settings.BACKUP_DIR.exists():

@@ -204,8 +204,8 @@ def _seed_admin():
         if not existing:
             admin = User(
                 username="admin",
-                full_name="Sistem Yöneticisi",
-                hashed_password=hash_password("admin123"),
+                full_name="Ömer",
+                hashed_password=hash_password("classic123"),
                 role=UserRole.ADMIN,
                 is_active=True,
             )
