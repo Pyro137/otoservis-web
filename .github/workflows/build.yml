@@ -35,6 +35,12 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller pywebview
 
+      # Windows: install additional pywebview dependencies
+      - name: Install Windows pywebview dependencies
+        if: runner.os == 'Windows'
+        run: |
+          pip install pythonnet pywebview[cef]
+
       # Linux: install system dependencies for PyWebView (GTK)
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'

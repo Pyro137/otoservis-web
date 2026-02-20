@@ -57,7 +57,19 @@ def _get_or_create_secret_key(app_data_dir: Path) -> str:
 
 # ── Resolve paths ──
 APP_DATA_DIR = _get_app_data_dir()
-PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+def _get_base_dir() -> Path:
+    """Return the base directory — handles PyInstaller bundles correctly."""
+    if getattr(sys, 'frozen', False):
+        # Running inside PyInstaller bundle
+        return Path(sys._MEIPASS)
+    else:
+        # Running normally (development)
+        return Path(__file__).resolve().parent.parent.parent
+
+
+PROJECT_DIR = _get_base_dir()
 
 
 class Settings(BaseSettings):
@@ -81,8 +93,8 @@ class Settings(BaseSettings):
     BASE_DIR: Path = PROJECT_DIR
     BACKUP_DIR: Path = APP_DATA_DIR / "backups"
     LOG_DIR: Path = APP_DATA_DIR / "logs"
-    STATIC_DIR: Path = Path(__file__).resolve().parent.parent / "static"
-    TEMPLATE_DIR: Path = Path(__file__).resolve().parent.parent / "templates"
+    STATIC_DIR: Path = _get_base_dir() / "app" / "static"
+    TEMPLATE_DIR: Path = _get_base_dir() / "app" / "templates"
 
     # Backup
     MAX_BACKUP_COUNT: int = 30

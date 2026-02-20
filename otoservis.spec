@@ -82,6 +82,15 @@ a = Analysis(
 
         # PyWebView
         'webview',
+        'webview.platforms.edgechromium',
+        'webview.platforms.winforms',
+        'webview.platforms.gtk',
+
+        # Windows COM/CLR (needed by pywebview on Windows)
+        'pythoncom',
+        'pywintypes',
+        'clr',
+        'clr_loader',
 
         # App modules
         'app',

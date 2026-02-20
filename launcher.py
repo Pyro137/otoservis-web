@@ -22,7 +22,37 @@ from urllib.request import urlopen
 
 import uvicorn
 
+# ── PyInstaller: fix working directory & module path ──────────
+if getattr(sys, 'frozen', False):
+    # When running as a bundled exe, set the working directory
+    # to the directory containing the exe
+    os.chdir(os.path.dirname(sys.executable))
+    # Ensure the temp extraction dir is on the path
+    bundle_dir = sys._MEIPASS
+    if bundle_dir not in sys.path:
+        sys.path.insert(0, bundle_dir)
+
+# ── Logging setup (visible even without console) ─────────────
+log_dir = os.path.join(tempfile.gettempdir(), "OtoServisLogs")
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, "launcher.log")
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.FileHandler(log_file, encoding="utf-8"),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+
 logger = logging.getLogger("launcher")
+logger.info(f"Launcher started. Log file: {log_file}")
+logger.info(f"Python: {sys.version}")
+logger.info(f"Frozen: {getattr(sys, 'frozen', False)}")
+if getattr(sys, 'frozen', False):
+    logger.info(f"Bundle dir: {sys._MEIPASS}")
+    logger.info(f"Executable: {sys.executable}")
 
 # ── Single-instance lock ────────────────────────────────────────
 LOCK_FILE = os.path.join(tempfile.gettempdir(), "otoservis_pro.lock")
@@ -137,6 +167,8 @@ def launch_webview(url: str):
     try:
         import webview
 
+        logger.info("Creating PyWebView window...")
+
         window = webview.create_window(
             title="Oto Servis Yönetim Sistemi",
             url=url,
@@ -145,7 +177,16 @@ def launch_webview(url: str):
             min_size=(1024, 600),
             text_select=True,
         )
-        webview.start()
+
+        # Choose GUI backend based on platform
+        if sys.platform == "win32":
+            gui_backend = "edgechromium"
+        else:
+            gui_backend = "gtk"
+
+        logger.info(f"Starting PyWebView with gui={gui_backend}")
+        webview.start(gui=gui_backend)
+
     except ImportError:
         logger.warning("pywebview not installed, falling back to system browser.")
         import webbrowser
@@ -157,7 +198,7 @@ def launch_webview(url: str):
         except KeyboardInterrupt:
             pass
     except Exception as e:
-        logger.error(f"PyWebView failed: {e}. Falling back to system browser.")
+        logger.error(f"PyWebView failed: {e}. Falling back to system browser.", exc_info=True)
         import webbrowser
         webbrowser.open(url)
         try:
