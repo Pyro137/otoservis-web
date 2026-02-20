@@ -178,34 +178,30 @@ def launch_webview(url: str):
             text_select=True,
         )
 
-        # Choose GUI backend based on platform
-        if sys.platform == "win32":
-            gui_backend = "edgechromium"
-        else:
-            gui_backend = "gtk"
+        # Let pywebview auto-detect the best backend:
+        #   Windows → winforms (uses Edge Chromium internally)
+        #   Linux   → gtk or qt
+        logger.info("Starting PyWebView (auto-detect backend)...")
+        webview.start()
 
-        logger.info(f"Starting PyWebView with gui={gui_backend}")
-        webview.start(gui=gui_backend)
-
-    except ImportError:
-        logger.warning("pywebview not installed, falling back to system browser.")
-        import webbrowser
-        webbrowser.open(url)
-        # Keep main thread alive so server doesn't die
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            pass
+    except ImportError as e:
+        logger.warning(f"pywebview not available: {e}. Falling back to system browser.")
+        _fallback_browser(url)
     except Exception as e:
         logger.error(f"PyWebView failed: {e}. Falling back to system browser.", exc_info=True)
-        import webbrowser
-        webbrowser.open(url)
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            pass
+        _fallback_browser(url)
+
+
+def _fallback_browser(url: str):
+    """Open URL in the default browser and keep the main thread alive."""
+    import webbrowser
+    webbrowser.open(url)
+    logger.info(f"Opened {url} in default browser. Press Ctrl+C to stop the server.")
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
 
 
 def main():

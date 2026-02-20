@@ -80,17 +80,16 @@ a = Analysis(
         'multipart',
         'aiofiles',
 
-        # PyWebView
+        # PyWebView + platform backends
         'webview',
+        'webview.guilib',
+        'webview.platforms',
         'webview.platforms.edgechromium',
         'webview.platforms.winforms',
         'webview.platforms.gtk',
-
-        # Windows COM/CLR (needed by pywebview on Windows)
-        'pythoncom',
-        'pywintypes',
-        'clr',
-        'clr_loader',
+        'webview.platforms.qt',
+        'webview.platforms.cocoa',
+        'webview.platforms.mshtml',
 
         # App modules
         'app',
