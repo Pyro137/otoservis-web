@@ -20,6 +20,15 @@ import atexit
 import tempfile
 from urllib.request import urlopen
 
+# ── Fix for PyInstaller --noconsole on Windows ────────────────
+# When --noconsole is set, sys.stdout and sys.stderr are None.
+# Uvicorn's logging calls sys.stderr.isatty() which crashes.
+# Redirect them to os.devnull BEFORE importing uvicorn.
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
+
 import uvicorn
 
 # ── PyInstaller: fix working directory & module path ──────────
@@ -37,13 +46,19 @@ log_dir = os.path.join(tempfile.gettempdir(), "OtoServisLogs")
 os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, "launcher.log")
 
+_log_handlers = [logging.FileHandler(log_file, encoding="utf-8")]
+# Only add console handler if we have a real stdout (not --noconsole)
+if hasattr(sys.stdout, 'fileno'):
+    try:
+        sys.stdout.fileno()
+        _log_handlers.append(logging.StreamHandler(sys.stdout))
+    except (OSError, ValueError):
+        pass
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.FileHandler(log_file, encoding="utf-8"),
-        logging.StreamHandler(sys.stdout),
-    ],
+    handlers=_log_handlers,
 )
 
 logger = logging.getLogger("launcher")
