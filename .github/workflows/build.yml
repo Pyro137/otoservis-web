@@ -1,0 +1,68 @@
+name: Build OtoServis
+
+# Trigger: manual dispatch or push to main
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: OtoServis.exe
+            asset_name: OtoServis-Windows
+          - os: ubuntu-latest
+            artifact_name: OtoServis
+            asset_name: OtoServis-Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller pywebview
+
+      # Linux: install system dependencies for PyWebView (GTK)
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgirepository1.0-dev \
+            gir1.2-webkit2-4.1 \
+            libwebkit2gtk-4.1-dev \
+            python3-gi \
+            python3-gi-cairo \
+            gobject-introspection
+
+      - name: Build with PyInstaller
+        run: pyinstaller otoservis.spec --noconfirm
+
+      - name: Copy config files
+        shell: bash
+        run: |
+          cp README.txt dist/ 2>/dev/null || true
+          cp config.ini dist/ 2>/dev/null || true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: |
+            dist/${{ matrix.artifact_name }}
+            dist/config.ini
+            dist/README.txt
+          retention-days: 90
